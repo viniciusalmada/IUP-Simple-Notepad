@@ -26,6 +26,9 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SimpleNotepad.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F33780AC-1749-4F6E-AE0E-FD45AD501805}</ProjectGuid>
     <RootNamespace>Simple_Notepad</RootNamespace>
