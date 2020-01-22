@@ -364,37 +364,47 @@ int main(int argc, char* argv[])
 	auto multitext = IupText(nullptr);
 	IupSetAttribute(multitext, "MULTILINE", "YES");
 	IupSetAttribute(multitext, "EXPAND", "YES");
+	IupSetAttribute(multitext, "NAME", "MULTITEXT");
 
 	auto item_open = IupItem("Open...", nullptr);
 	auto item_saveas = IupItem("Save as...", nullptr);
 	auto item_exit = IupItem("Exit", nullptr);
+	auto item_find = IupItem("Find...", nullptr);
+	auto item_goto = IupItem("Go To...", nullptr);
 	auto item_font = IupItem("Font...", nullptr);
 	auto item_about = IupItem("About...", nullptr);
 
 	IupSetCallback(item_open, "ACTION", (Icallback)item_open_action_cb);
 	IupSetCallback(item_saveas, "ACTION", (Icallback)item_saveas_action_cb);
 	IupSetCallback(item_exit, "ACTION", (Icallback)item_exit_action_cb);
+	IupSetCallback(item_find, "ACTION", (Icallback)item_find_action_cb);
+	IupSetCallback(item_goto, "ACTION", (Icallback)item_goto_action_cb);
 	IupSetCallback(item_font, "ACTION", (Icallback)item_font_action_cb);
 	IupSetCallback(item_about, "ACTION", (Icallback)item_about_action_cb);
 
 	auto file_menu = IupMenu(item_open, item_saveas, IupSeparator(), item_exit, NULL);
+	auto edit_menu = IupMenu(item_find, item_goto, NULL);
 	auto format_menu = IupMenu(item_font, NULL);
 	auto help_menu = IupMenu(item_about, NULL);
 
 	auto submenu_file = IupSubmenu("File", file_menu);
+	auto submenu_edit = IupSubmenu("Edit", edit_menu);
 	auto submenu_format = IupSubmenu("Format", format_menu);
 	auto submenu_help = IupSubmenu("Help", help_menu);
 
-	auto menu = IupMenu(submenu_file, submenu_format, submenu_help, NULL);
+	auto menu = IupMenu(submenu_file, submenu_edit, submenu_format, submenu_help, NULL);
 
 	auto vbox = IupVbox(multitext, NULL);
 
 	auto dlg = IupDialog(vbox);
 	IupSetAttributeHandle(dlg, "MENU", menu);
 	IupSetAttribute(dlg, "TITLE", "Simple Notepad");
-	IupSetAttribute(dlg, "SIZE", "QUARTERxQUARTER");
+	IupSetAttribute(dlg, "SIZE", "HALFxHALF");
 
-	IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
+	/* parent for pre-defined dialogs in closed functions (IupMessage) */
+	IupSetAttributeHandle(NULL, "PARENTDIALOG", dlg);
+
+	IupShowXY(dlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 	IupSetAttribute(dlg, "USERSIZE", nullptr);
 
 	IupMainLoop();
