@@ -198,6 +198,52 @@ int goto_cancel_action_cb(Ihandle* bt_ok)
 	return IUP_CLOSE;
 }
 
+int item_goto_action_cb(Ihandle* item_goto)
+{
+	auto multitext = IupGetDialogChild(item_goto, "MULTITEXT");
+	auto line_count = IupGetInt(multitext, "LINECOUNT");
+
+	auto lbl = IupLabel(nullptr);
+	IupSetfAttribute(lbl, "TITLE", "Line Number [1-%d]:", line_count);
+	auto txt = IupText(nullptr);
+	IupSetAttribute(txt, "MASK", IUP_MASK_UINT); /* unsigned integers numbers only */
+	IupSetAttribute(txt, "NAME", "LINE_TEXT");
+	IupSetAttribute(txt, "VISIBLECOLUMNS", "20");
+	auto bt_ok = IupButton("OK", nullptr);
+	IupSetInt(bt_ok, "TEXT_LINECOUNT", line_count);
+	IupSetAttribute(bt_ok, "PADDING", "10x2");
+	IupSetCallback(bt_ok, "ACTION", (Icallback)goto_cancel_action_cb);
+	auto bt_cancel = IupButton("Cancel", nullptr);
+	IupSetCallback(bt_cancel, "ACTION", (Icallback)goto_cancel_action_cb);
+	IupSetAttribute(bt_cancel, "PADDING", "10x2");
+	auto bt_hbox = IupHbox(IupFill(), bt_ok, bt_cancel, NULL);
+	auto box = IupVbox(lbl, txt, IupSetAttributes(bt_hbox, "NORMALIZESIZE=HORIZONTAL"), NULL);
+	IupSetAttribute(box, "MARGIN", "10x10");
+	IupSetAttribute(box, "GAP", "5");
+
+	auto dlg = IupDialog(box);
+	IupSetAttribute(dlg, "TITLE", "Go to line");
+	IupSetAttribute(dlg, "DIALOGFRAME", "Yes");
+	IupSetAttributeHandle(dlg, "DEFAULTENTER", bt_ok);
+	IupSetAttributeHandle(dlg, "DEFAULTESC", bt_cancel);
+	IupSetAttributeHandle(dlg, "PARENTDIALOG", IupGetDialog(item_goto));
+
+	IupPopup(dlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
+
+	if (IupGetInt(dlg,"STATUS") == 1)
+	{
+		auto line = IupGetInt(txt, "VALUE");
+		int pos;
+		IupTextConvertLinColToPos(multitext, line, 0, &pos);
+		IupSetInt(multitext, "CARETPOS", pos);
+		IupSetInt(multitext, "SCROLLTOPOS", pos);
+	}
+
+	IupDestroy(dlg);
+
+	return IUP_DEFAULT;
+}
+
 int font_cb()
 {
 	auto fontdlg = IupFontDlg();
