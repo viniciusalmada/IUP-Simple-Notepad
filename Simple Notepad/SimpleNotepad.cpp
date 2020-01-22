@@ -130,13 +130,15 @@ void write_file(const char* filename, const char* str, int count)
 	fclose(file);
 }
 
-int open_cb()
+int item_open_action_cb(Ihandle* item_open)
 {
-	const auto filedlg = IupFileDlg();
+	auto multitext = IupGetDialogChild(item_open, "MULTITEXT");
+	auto filedlg = IupFileDlg();
 	IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN");
 	IupSetAttribute(filedlg, "EXTFILTER", "Text Files|*.txt|AllFiles|*.*|");
+	IupSetAttributeHandle(filedlg, "PARENTDIALOG", IupGetDialog(item_open));
 
-	IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
+	IupPopup(filedlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 
 	if (IupGetInt(filedlg, "STATUS") != -1)
 	{
@@ -153,13 +155,15 @@ int open_cb()
 	return IUP_DEFAULT;
 }
 
-int saveas_cb()
+int item_saveas_action_cb(Ihandle* item_saveas)
 {
+	auto multitext = IupGetDialogChild(item_saveas, "MULTITEXT");
 	auto filedlg = IupFileDlg();
 	IupSetAttribute(filedlg, "DIALOGTYPE", "SAVE");
 	IupSetAttribute(filedlg, "EXTFILTER", "Text Files|*.txt|All Files|*.*");
+	IupSetAttributeHandle(filedlg, "PARENTDIALOG", IupGetDialog(item_saveas));
 
-	IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
+	IupPopup(filedlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 
 	if (IupGetInt(filedlg, "STATUS") != -1)
 	{
@@ -171,6 +175,21 @@ int saveas_cb()
 
 	IupDestroy(filedlg);
 	return IUP_DEFAULT;
+}
+
+int goto_ok_action_cb(Ihandle* bt_ok)
+{
+	auto line_count = IupGetInt(bt_ok, "TEXT_LINECOUNT");
+	auto txt = IupGetDialogChild(bt_ok, "LINE_TEXT");
+	auto line = IupGetInt(txt, "VALUE");
+	if (line < 1 || line >= line_count)
+	{
+		IupMessage("Error", "Invalid line numbers");
+		return IUP_DEFAULT;
+	}
+
+	IupSetAttribute(IupGetDialog(bt_ok), "STATUS", "1");
+	return IUP_CLOSE;
 }
 
 int font_cb()
@@ -196,7 +215,7 @@ int about_cb()
 	return IUP_DEFAULT;
 }
 
-int exit_cb(Ihandle* self)
+int item_exit_action_cb()
 {
 	return IUP_CLOSE;
 }
@@ -215,9 +234,9 @@ int main(int argc, char* argv[])
 	auto item_font = IupItem("Font...", nullptr);
 	auto item_about = IupItem("About...", nullptr);
 
-	IupSetCallback(item_open, "ACTION", (Icallback)open_cb);
-	IupSetCallback(item_saveas, "ACTION", (Icallback)saveas_cb);
-	IupSetCallback(item_exit, "ACTION", (Icallback)exit_cb);
+	IupSetCallback(item_open, "ACTION", (Icallback)item_open_action_cb);
+	IupSetCallback(item_saveas, "ACTION", (Icallback)item_saveas_action_cb);
+	IupSetCallback(item_exit, "ACTION", (Icallback)item_exit_action_cb);
 	IupSetCallback(item_font, "ACTION", (Icallback)font_cb);
 	IupSetCallback(item_about, "ACTION", (Icallback)about_cb);
 
