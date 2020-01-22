@@ -22,6 +22,7 @@
 #include "iup.h"
 #include <cstdio>
 #include <cctype>
+#include <cstring>
 
 // Global variable to be used inside the menu callbacks
 Ihandle* multitext = nullptr;
@@ -59,6 +60,28 @@ int str_compare(const char* l, const char* r, int case_sensitive)
 	if (*r == 0) return 1;
 
 	return 0;
+}
+
+int str_find(const char *str, const char *str_to_find, int casesensitive)
+{
+	if (!str || str[0] == 0 || !str_to_find || str_to_find[0] == 0) return -1;
+
+	auto str_len = (int)strlen(str);
+	auto str_to_find_len = (int)strlen(str_to_find);
+	auto count = str_len - str_to_find_len;
+
+	if (count < 0) return -1;
+
+	count++;
+
+	for (auto i = 0; i < count; i++)
+	{
+		if (str_compare(str, str_to_find, casesensitive)) return i;
+
+		str++;
+	}
+
+	return -1;
 }
 
 char* read_file(const char* filename)
