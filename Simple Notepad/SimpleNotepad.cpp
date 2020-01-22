@@ -361,7 +361,7 @@ int main(int argc, char* argv[])
 {
 	IupOpen(&argc, &argv);
 
-	multitext = IupText(nullptr);
+	auto multitext = IupText(nullptr);
 	IupSetAttribute(multitext, "MULTILINE", "YES");
 	IupSetAttribute(multitext, "EXPAND", "YES");
 
