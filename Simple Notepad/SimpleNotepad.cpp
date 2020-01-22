@@ -192,6 +192,12 @@ int goto_ok_action_cb(Ihandle* bt_ok)
 	return IUP_CLOSE;
 }
 
+int goto_cancel_action_cb(Ihandle* bt_ok)
+{
+	IupSetAttribute(IupGetDialog(bt_ok), "STATUS", "0");
+	return IUP_CLOSE;
+}
+
 int font_cb()
 {
 	auto fontdlg = IupFontDlg();
