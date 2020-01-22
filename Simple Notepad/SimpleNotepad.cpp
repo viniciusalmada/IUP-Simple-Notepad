@@ -8,14 +8,53 @@
  *
  * Version 1.3
  * -Used pre-defined dialogs
+ *
+ * Version 1.4
+ * -Custom dialogs for Find and Go to 
  */
 // ReSharper disable CppLocalVariableMayBeConst
 #include <cstdlib>
 #include "iup.h"
 #include <cstdio>
+#include <cctype>
 
 // Global variable to be used inside the menu callbacks
 Ihandle* multitext = nullptr;
+
+int str_compare(const char* l, const char* r, int case_sensitive)
+{
+	if (!l || !r) return 0;
+
+
+	while (*l && *r)
+	{
+		int diff;
+		auto l_char = *l;
+		auto r_char = *r;
+
+		/* computes the difference of both characters */
+		if (case_sensitive)
+			diff = l_char - r_char;
+
+		else
+			diff = tolower((int)l_char) - tolower((int)r_char);
+
+		/* if they differ we have a result */
+		if (diff != 0) return 0;
+
+		/* otherwise process the next character */
+		++l;
+		++r;
+	}
+
+	/* check also for terminator */
+	if (*l == *r)	return 1;
+
+	/* if second string is at terminator, then it is partially equal */
+	if (*r == 0) return 1;
+
+	return 0;
+}
 
 char* read_file(const char* filename)
 {
@@ -115,8 +154,8 @@ int font_cb()
 
 	if (IupGetInt(fontdlg, "STATUS") == 1)
 	{
-		auto font = IupGetAttribute(fontdlg, "VALUE");
-		IupSetStrAttribute(multitext, "FONT", font);
+		auto font_from_dlg = IupGetAttribute(fontdlg, "VALUE");
+		IupSetStrAttribute(multitext, "FONT", font_from_dlg);
 	}
 
 	IupDestroy(fontdlg);
