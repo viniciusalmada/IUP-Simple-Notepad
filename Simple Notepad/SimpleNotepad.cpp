@@ -1,13 +1,133 @@
 /* Simple Notepad from IUP Tutorial at
  * <https://www.tecgraf.puc-rio.br/iup/en/tutorial/tutorial3.html>
- * Version 1.00
+ * Version 1.0
  * -Dialog with multiline text field
  *
- * Version 2.00
+ * Version 1.2
  * -Added menu and submenu options
+ *
+ * Version 1.3
+ * -Used pre-defined dialogs
  */
+// ReSharper disable CppLocalVariableMayBeConst
 #include <cstdlib>
 #include "iup.h"
+#include <cstdio>
+
+// Global variable to be used inside the menu callbacks
+Ihandle* multitext = nullptr;
+
+char* read_file(const char* filename)
+{
+	const auto file = fopen(filename, "rb");
+	if (!file)
+	{
+		IupMessagef("Error!", "Can't open file: %s", filename);
+		return nullptr;
+	}
+
+	/* calculate file size */
+	fseek(file, 0, SEEK_END);
+	const auto size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	/* Allocate memory for the file contents + nul terminator */
+	const auto textFromFile = new char[size + 1];
+	/* read all data at once */
+	fread(textFromFile, size, 1, file);
+	textFromFile[size] = 0;
+
+	if (ferror(file))
+		IupMessagef("Error!", "Fail when reading from file: %s", filename);
+
+	fclose(file);
+	return textFromFile;
+}
+
+void write_file(const char* filename, const char* str, int count)
+{
+	auto file = fopen(filename, "w");
+	if (!file)
+	{
+		IupMessagef("Error", "Can't open file: %s", filename);
+		return;
+	}
+
+	fwrite(str, 1, count, file);
+
+	if (ferror(file))
+	{
+		IupMessagef("Error", "Fail when writing to file: %s", filename);
+	}
+
+	fclose(file);
+}
+
+int open_cb()
+{
+	const auto filedlg = IupFileDlg();
+	IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN");
+	IupSetAttribute(filedlg, "EXTFILTER", "Text Files|*.txt|AllFiles|*.*|");
+
+	IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
+
+	if (IupGetInt(filedlg, "STATUS") != -1)
+	{
+		auto filename = IupGetAttribute(filedlg, "VALUE");
+		auto str = read_file(filename);
+		if (str)
+		{
+			IupSetStrAttribute(multitext, "VALUE", str);
+			delete str;
+		}
+	}
+
+	IupDestroy(filedlg);
+	return IUP_DEFAULT;
+}
+
+int saveas_cb()
+{
+	auto filedlg = IupFileDlg();
+	IupSetAttribute(filedlg, "DIALOGTYPE", "SAVE");
+	IupSetAttribute(filedlg, "EXTFILTER", "Text Files|*.txt|All Files|*.*");
+
+	IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
+
+	if (IupGetInt(filedlg, "STATUS") != -1)
+	{
+		auto filename = IupGetAttribute(filedlg, "VALUE");
+		auto str = IupGetAttribute(multitext, "VALUE");
+		auto count = IupGetInt(multitext, "COUNT");
+		write_file(filename, str, count);
+	}
+
+	IupDestroy(filedlg);
+	return IUP_DEFAULT;
+}
+
+int font_cb()
+{
+	auto fontdlg = IupFontDlg();
+	auto font = IupGetAttribute(multitext, "FONT");
+	IupSetStrAttribute(fontdlg, "VALUE", font);
+	IupPopup(fontdlg, IUP_CENTER, IUP_CENTER);
+
+	if (IupGetInt(fontdlg, "STATUS") == 1)
+	{
+		auto font = IupGetAttribute(fontdlg, "VALUE");
+		IupSetStrAttribute(multitext, "FONT", font);
+	}
+
+	IupDestroy(fontdlg);
+	return IUP_DEFAULT;
+}
+
+int about_cb()
+{
+	IupMessage("About", "Simple Notepad\nAuthor:\nVinicius Almada");
+	return IUP_DEFAULT;
+}
 
 int exit_cb(Ihandle* self)
 {
@@ -18,26 +138,33 @@ int main(int argc, char* argv[])
 {
 	IupOpen(&argc, &argv);
 
-	auto multiline = IupText(nullptr);
-	IupSetAttribute(multiline, "MULTILINE", "YES");
-	IupSetAttribute(multiline, "EXPAND", "YES");
+	multitext = IupText(nullptr);
+	IupSetAttribute(multitext, "MULTILINE", "YES");
+	IupSetAttribute(multitext, "EXPAND", "YES");
 
-	auto item_open = IupItem("Open", nullptr);
-	auto item_saveas = IupItem("Save as", nullptr);
+	auto item_open = IupItem("Open...", nullptr);
+	auto item_saveas = IupItem("Save as...", nullptr);
 	auto item_exit = IupItem("Exit", nullptr);
+	auto item_font = IupItem("Font...", nullptr);
+	auto item_about = IupItem("About...", nullptr);
+
+	IupSetCallback(item_open, "ACTION", (Icallback)open_cb);
+	IupSetCallback(item_saveas, "ACTION", (Icallback)saveas_cb);
 	IupSetCallback(item_exit, "ACTION", (Icallback)exit_cb);
+	IupSetCallback(item_font, "ACTION", (Icallback)font_cb);
+	IupSetCallback(item_about, "ACTION", (Icallback)about_cb);
 
-	auto file_menu = IupMenu(
-		item_open,
-		item_saveas,
-		IupSeparator(),
-		item_exit,
-		NULL);
+	auto file_menu = IupMenu(item_open, item_saveas, IupSeparator(), item_exit, NULL);
+	auto format_menu = IupMenu(item_font, NULL);
+	auto help_menu = IupMenu(item_about, NULL);
 
-	auto sub1_menu = IupSubmenu("File", file_menu);
-	auto menu = IupMenu(sub1_menu, NULL);
+	auto submenu_file = IupSubmenu("File", file_menu);
+	auto submenu_format = IupSubmenu("Format", format_menu);
+	auto submenu_help = IupSubmenu("Help", help_menu);
 
-	auto vbox = IupVbox(multiline, NULL);
+	auto menu = IupMenu(submenu_file, submenu_format, submenu_help, NULL);
+
+	auto vbox = IupVbox(multitext, NULL);
 
 	auto dlg = IupDialog(vbox);
 	IupSetAttributeHandle(dlg, "MENU", menu);
