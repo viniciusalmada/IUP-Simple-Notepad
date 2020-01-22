@@ -13,6 +13,11 @@
  * -Custom dialogs for Find and Go to 
  */
 // ReSharper disable CppLocalVariableMayBeConst
+// ReSharper disable CppInconsistentNaming
+// ReSharper disable CppCStyleCast
+// ReSharper disable CppDeprecatedEntity
+// ReSharper disable CppParameterMayBeConst
+// ReSharper disable CppClangTidyClangDiagnosticDeprecatedDeclarations
 #include <cstdlib>
 #include "iup.h"
 #include <cstdio>
