@@ -54,7 +54,7 @@ int str_compare(const char* l, const char* r, int case_sensitive)
 	}
 
 	/* check also for terminator */
-	if (*l == *r)	return 1;
+	if (*l == *r) return 1;
 
 	/* if second string is at terminator, then it is partially equal */
 	if (*r == 0) return 1;
@@ -62,7 +62,7 @@ int str_compare(const char* l, const char* r, int case_sensitive)
 	return 0;
 }
 
-int str_find(const char *str, const char *str_to_find, int casesensitive)
+int str_find(const char* str, const char* str_to_find, int casesensitive)
 {
 	if (!str || str[0] == 0 || !str_to_find || str_to_find[0] == 0) return -1;
 
@@ -230,7 +230,7 @@ int item_goto_action_cb(Ihandle* item_goto)
 
 	IupPopup(dlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 
-	if (IupGetInt(dlg,"STATUS") == 1)
+	if (IupGetInt(dlg, "STATUS") == 1)
 	{
 		auto line = IupGetInt(txt, "VALUE");
 		int pos;
@@ -240,6 +240,43 @@ int item_goto_action_cb(Ihandle* item_goto)
 	}
 
 	IupDestroy(dlg);
+
+	return IUP_DEFAULT;
+}
+
+int find_next_action_cb(Ihandle* bt_next)
+{
+	auto multitext = (Ihandle*)IupGetAttribute(bt_next, "MULTITEXT");
+	auto str = IupGetAttribute(multitext, "VALUE");
+	auto find_pos = IupGetInt(multitext, "FIND_POS");
+
+	auto txt = IupGetDialogChild(bt_next, "FIND_TEXT");
+	auto str_to_find = (char*)IupGetInt(txt, "VALUE");
+
+	auto find_case = IupGetDialogChild(bt_next, "FIND_CASE");
+	auto casesensitive = IupGetInt(find_case, "VALUE");
+
+	auto pos = str_find(str + find_pos, str_to_find, casesensitive);
+	if (pos >= 0)
+		pos += find_pos;
+	else if (find_pos > 0)
+		pos = str_find(str, str_to_find, casesensitive); /* try again from the start */
+
+	if (pos >= 0)
+	{
+		auto end_pos = pos + (int)strlen(str_to_find);
+
+		IupSetInt(multitext, "FIND_POS", end_pos);
+
+		IupSetFocus(multitext);
+		IupSetfAttribute(multitext, "SELECTIONPOS", "%d:%d", pos, end_pos);
+
+		int lin, col;
+		IupTextConvertPosToLinCol(multitext, pos, &lin, &col);
+		IupTextConvertLinColToPos(multitext, lin, 0, &pos); /* position at col=0, just scroll lines */
+		IupSetInt(multitext, "SCROLLTOPOS", pos);
+	}
+	else IupMessage("Warning", "Text not found.");
 
 	return IUP_DEFAULT;
 }
