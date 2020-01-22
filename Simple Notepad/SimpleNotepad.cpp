@@ -24,9 +24,6 @@
 #include <cctype>
 #include <cstring>
 
-// Global variable to be used inside the menu callbacks
-Ihandle* multitext = nullptr;
-
 int str_compare(const char* l, const char* r, int case_sensitive)
 {
 	if (!l || !r) return 0;
@@ -281,8 +278,59 @@ int find_next_action_cb(Ihandle* bt_next)
 	return IUP_DEFAULT;
 }
 
-int font_cb()
+int find_close_action_cb(Ihandle* bt_close)
 {
+	IupHide(IupGetDialog(bt_close));
+	return IUP_DEFAULT;
+}
+
+int item_find_action_cb(Ihandle* item_find)
+{
+	auto dlg = (Ihandle*)IupGetAttribute(item_find, "FIND_DIALOG");
+	if (!dlg)
+	{
+		auto multitext = IupGetDialogChild(item_find, "MULTITEXT");
+
+		auto txt = IupText(nullptr);
+		auto find_case = IupToggle("Case Sensitive", nullptr);
+		auto bt_next = IupButton("Close", nullptr);
+		auto bt_close = IupButton("Close", nullptr);
+		IupSetAttribute(txt, "NAME", "FIND_TEXT");
+		IupSetAttribute(txt, "VISIBLECOLUMNS", "20");
+		IupSetAttribute(find_case, "NAME", "FIND_CASE");
+		IupSetAttribute(bt_next, "PADDING", "10x2");
+		IupSetCallback(bt_next, "ACTION", (Icallback)find_next_action_cb);
+		IupSetAttribute(bt_close, "PADDING", "10x2");
+		IupSetCallback(bt_close, "ACTION", (Icallback)find_close_action_cb);
+
+		auto bt_hbox = IupHbox(IupFill(), bt_next, bt_close, NULL);
+		auto box = IupVbox(IupLabel("Find What:"), txt, find_case,
+							IupSetAttributes(bt_hbox, "NORMALIZESIZE=HORIZONTAL"), NULL);
+		IupSetAttribute(box, "MARGIN", "10x10");
+		IupSetAttribute(box, "GAP", "5");
+
+		dlg = IupDialog(box);
+		IupSetAttribute(dlg, "TITLE", "Find");
+		IupSetAttribute(dlg, "DIALOGFRAME", "Yes");
+		IupSetAttributeHandle(dlg, "DEFAULTENTER", bt_next);
+		IupSetAttributeHandle(dlg, "DEFAULTESC", bt_close);
+		IupSetAttributeHandle(dlg, "PARENTDIALOG", IupGetDialog(item_find));
+
+		/* Save the multiline to access it from the callbacks */
+		IupSetAttribute(dlg, "MULTITEXT", (char*)multitext);
+
+		/* Save the dialog to reuse it */
+		IupSetAttribute(item_find, "FIND_DIALOG", (char*)dlg);
+	}
+	/* centerparent first time, next time reuse the last position */
+	IupShowXY(dlg, IUP_CURRENT, IUP_CURRENT);
+
+	return IUP_DEFAULT;
+}
+
+int item_font_action_cb(Ihandle* item_font)
+{
+	auto multitext = IupGetDialogChild(item_font, "MULTITEXT");
 	auto fontdlg = IupFontDlg();
 	auto font = IupGetAttribute(multitext, "FONT");
 	IupSetStrAttribute(fontdlg, "VALUE", font);
@@ -298,7 +346,7 @@ int font_cb()
 	return IUP_DEFAULT;
 }
 
-int about_cb()
+int item_about_action_cb()
 {
 	IupMessage("About", "Simple Notepad\nAuthor:\nVinicius Almada");
 	return IUP_DEFAULT;
@@ -326,8 +374,8 @@ int main(int argc, char* argv[])
 	IupSetCallback(item_open, "ACTION", (Icallback)item_open_action_cb);
 	IupSetCallback(item_saveas, "ACTION", (Icallback)item_saveas_action_cb);
 	IupSetCallback(item_exit, "ACTION", (Icallback)item_exit_action_cb);
-	IupSetCallback(item_font, "ACTION", (Icallback)font_cb);
-	IupSetCallback(item_about, "ACTION", (Icallback)about_cb);
+	IupSetCallback(item_font, "ACTION", (Icallback)item_font_action_cb);
+	IupSetCallback(item_about, "ACTION", (Icallback)item_about_action_cb);
 
 	auto file_menu = IupMenu(item_open, item_saveas, IupSeparator(), item_exit, NULL);
 	auto format_menu = IupMenu(item_font, NULL);
