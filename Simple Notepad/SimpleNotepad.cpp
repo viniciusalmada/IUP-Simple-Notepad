@@ -23,6 +23,8 @@
 #include <cstdio>
 #include <cctype>
 #include <cstring>
+#include "Constants.h"
+#include <iostream>
 
 int str_compare(const char* l, const char* r, int case_sensitive)
 {
@@ -129,21 +131,21 @@ void write_file(const char* filename, const char* str, int count)
 
 int item_open_action_cb(Ihandle* item_open)
 {
-	auto multitext = IupGetDialogChild(item_open, "MULTITEXT");
+	auto multitext = IupGetDialogChild(item_open, Name::MULTITEXT);
 	auto filedlg = IupFileDlg();
-	IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN");
-	IupSetAttribute(filedlg, "EXTFILTER", "Text Files|*.txt|AllFiles|*.*|");
-	IupSetAttributeHandle(filedlg, "PARENTDIALOG", IupGetDialog(item_open));
+	IupSetAttribute(filedlg, Attr::DIALOGTYPE, Val::OPEN);
+	IupSetAttribute(filedlg, Attr::EXTFILTER, Val::TXT_FILES);
+	IupSetAttributeHandle(filedlg, Attr::PARENTDIALOG, IupGetDialog(item_open));
 
 	IupPopup(filedlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 
-	if (IupGetInt(filedlg, "STATUS") != -1)
+	if (IupGetInt(filedlg, Attr::STATUS) != -1)
 	{
-		auto filename = IupGetAttribute(filedlg, "VALUE");
+		auto filename = IupGetAttribute(filedlg, Attr::VALUE);
 		auto str = read_file(filename);
 		if (str)
 		{
-			IupSetStrAttribute(multitext, "VALUE", str);
+			IupSetStrAttribute(multitext, Attr::VALUE, str);
 			delete str;
 		}
 	}
@@ -154,19 +156,19 @@ int item_open_action_cb(Ihandle* item_open)
 
 int item_saveas_action_cb(Ihandle* item_saveas)
 {
-	auto multitext = IupGetDialogChild(item_saveas, "MULTITEXT");
+	auto multitext = IupGetDialogChild(item_saveas, Name::MULTITEXT);
 	auto filedlg = IupFileDlg();
-	IupSetAttribute(filedlg, "DIALOGTYPE", "SAVE");
-	IupSetAttribute(filedlg, "EXTFILTER", "Text Files|*.txt|All Files|*.*");
-	IupSetAttributeHandle(filedlg, "PARENTDIALOG", IupGetDialog(item_saveas));
+	IupSetAttribute(filedlg, Attr::DIALOGTYPE, Val::SAVE);
+	IupSetAttribute(filedlg, Attr::EXTFILTER, Val::TXT_FILES);
+	IupSetAttributeHandle(filedlg, Attr::PARENTDIALOG, IupGetDialog(item_saveas));
 
 	IupPopup(filedlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 
-	if (IupGetInt(filedlg, "STATUS") != -1)
+	if (IupGetInt(filedlg, Attr::STATUS) != -1)
 	{
-		auto filename = IupGetAttribute(filedlg, "VALUE");
-		auto str = IupGetAttribute(multitext, "VALUE");
-		auto count = IupGetInt(multitext, "COUNT");
+		auto filename = IupGetAttribute(filedlg, Attr::VALUE);
+		auto str = IupGetAttribute(multitext, Attr::VALUE);
+		auto count = IupGetInt(multitext, Attr::COUNT);
 		write_file(filename, str, count);
 	}
 
@@ -176,64 +178,68 @@ int item_saveas_action_cb(Ihandle* item_saveas)
 
 int goto_ok_action_cb(Ihandle* bt_ok)
 {
-	auto line_count = IupGetInt(bt_ok, "TEXT_LINECOUNT");
-	auto txt = IupGetDialogChild(bt_ok, "LINE_TEXT");
-	auto line = IupGetInt(txt, "VALUE");
+	auto line_count = IupGetInt(bt_ok, Attr::TEXT_LINECOUNT);
+	auto txt = IupGetDialogChild(bt_ok, Name::LINE_TEXT);
+	auto line = IupGetInt(txt, Attr::VALUE);
 	if (line < 1 || line >= line_count)
 	{
-		IupMessage("Error", "Invalid line numbers");
+		IupMessage(ERROR, INVALID_LINE_NUM);
 		return IUP_DEFAULT;
 	}
 
-	IupSetAttribute(IupGetDialog(bt_ok), "STATUS", "1");
+	IupSetAttribute(IupGetDialog(bt_ok), Attr::STATUS, Val::ONE);
 	return IUP_CLOSE;
 }
 
 int goto_cancel_action_cb(Ihandle* bt_ok)
 {
-	IupSetAttribute(IupGetDialog(bt_ok), "STATUS", "0");
+	IupSetAttribute(IupGetDialog(bt_ok), Attr::STATUS, Val::ZERO);
 	return IUP_CLOSE;
 }
 
 int item_goto_action_cb(Ihandle* item_goto)
 {
-	auto multitext = IupGetDialogChild(item_goto, "MULTITEXT");
-	auto line_count = IupGetInt(multitext, "LINECOUNT");
+	auto multitext = IupGetDialogChild(item_goto, Name::MULTITEXT);
+	auto line_count = IupGetInt(multitext, Attr::LINECOUNT);
 
 	auto lbl = IupLabel(nullptr);
-	IupSetfAttribute(lbl, "TITLE", "Line Number [1-%d]:", line_count);
+	IupSetfAttribute(lbl, Attr::TITLE, LINE_NUM_F, line_count);
+	
 	auto txt = IupText(nullptr);
-	IupSetAttribute(txt, "MASK", IUP_MASK_UINT); /* unsigned integers numbers only */
-	IupSetAttribute(txt, "NAME", "LINE_TEXT");
-	IupSetAttribute(txt, "VISIBLECOLUMNS", "20");
-	auto bt_ok = IupButton("OK", nullptr);
-	IupSetInt(bt_ok, "TEXT_LINECOUNT", line_count);
-	IupSetAttribute(bt_ok, "PADDING", "10x2");
-	IupSetCallback(bt_ok, "ACTION", (Icallback)goto_cancel_action_cb);
-	auto bt_cancel = IupButton("Cancel", nullptr);
-	IupSetCallback(bt_cancel, "ACTION", (Icallback)goto_cancel_action_cb);
-	IupSetAttribute(bt_cancel, "PADDING", "10x2");
+	IupSetAttribute(txt, Attr::MASK, IUP_MASK_UINT); /* unsigned integers numbers only */
+	IupSetAttribute(txt, Attr::NAME, Name::LINE_TEXT);
+	IupSetAttribute(txt, Attr::VISIBLECOLUMNS, _20);
+
+	auto bt_ok = IupButton(OK, nullptr);
+	IupSetInt(bt_ok, Attr::TEXT_LINECOUNT, line_count);
+	IupSetAttribute(bt_ok, Attr::PADDING, P_10_X_2);
+	IupSetCallback(bt_ok, Attr::ACTION, (Icallback)goto_cancel_action_cb);
+
+	auto bt_cancel = IupButton(CANCEL, nullptr);
+	IupSetCallback(bt_cancel, Attr::ACTION, (Icallback)goto_cancel_action_cb);
+	IupSetAttribute(bt_cancel, Attr::PADDING, P_10_X_2);
+
 	auto bt_hbox = IupHbox(IupFill(), bt_ok, bt_cancel, NULL);
-	auto box = IupVbox(lbl, txt, IupSetAttributes(bt_hbox, "NORMALIZESIZE=HORIZONTAL"), NULL);
-	IupSetAttribute(box, "MARGIN", "10x10");
-	IupSetAttribute(box, "GAP", "5");
+	auto box = IupVbox(lbl, txt, IupSetAttributes(bt_hbox, Attr::NORMAL_HOR), NULL);
+	IupSetAttribute(box, Attr::MARGIN, M_10_X_10);
+	IupSetAttribute(box, Attr::GAP, _5);
 
 	auto dlg = IupDialog(box);
-	IupSetAttribute(dlg, "TITLE", "Go to line");
-	IupSetAttribute(dlg, "DIALOGFRAME", "Yes");
-	IupSetAttributeHandle(dlg, "DEFAULTENTER", bt_ok);
-	IupSetAttributeHandle(dlg, "DEFAULTESC", bt_cancel);
-	IupSetAttributeHandle(dlg, "PARENTDIALOG", IupGetDialog(item_goto));
+	IupSetAttribute(dlg, Attr::TITLE,GO_TO);
+	IupSetAttribute(dlg, Attr::DIALOGFRAME, Val::Y);
+	IupSetAttributeHandle(dlg, Attr::DEFAULTENTER, bt_ok);
+	IupSetAttributeHandle(dlg, Attr::DEFAULTESC, bt_cancel);
+	IupSetAttributeHandle(dlg, Attr::PARENTDIALOG, IupGetDialog(item_goto));
 
 	IupPopup(dlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 
-	if (IupGetInt(dlg, "STATUS") == 1)
+	if (IupGetInt(dlg, Attr::STATUS) == 1)
 	{
-		auto line = IupGetInt(txt, "VALUE");
+		auto line = IupGetInt(txt, Attr::VALUE);
 		int pos;
 		IupTextConvertLinColToPos(multitext, line, 0, &pos);
-		IupSetInt(multitext, "CARETPOS", pos);
-		IupSetInt(multitext, "SCROLLTOPOS", pos);
+		IupSetInt(multitext, Attr::CARETPOS, pos);
+		IupSetInt(multitext, Attr::SCROLLTOPOS, pos);
 	}
 
 	IupDestroy(dlg);
@@ -243,15 +249,19 @@ int item_goto_action_cb(Ihandle* item_goto)
 
 int find_next_action_cb(Ihandle* bt_next)
 {
-	auto multitext = (Ihandle*)IupGetAttribute(bt_next, "MULTITEXT");
-	auto str = IupGetAttribute(multitext, "VALUE");
-	auto find_pos = IupGetInt(multitext, "FIND_POS");
+	auto multitext = (Ihandle*)IupGetAttribute(bt_next, Name::MULTITEXT);
+	std::cout << Name::MULTITEXT << ":" << multitext << std::endl;
 
-	auto txt = IupGetDialogChild(bt_next, "FIND_TEXT");
-	auto str_to_find = (char*)IupGetInt(txt, "VALUE");
+	auto str = IupGetAttribute(multitext, Attr::VALUE);
+	std::cout << Name::MULTITEXT << ".VALUE:" << str << std::endl;
+	auto find_pos = IupGetInt(multitext, Attr::FIND_POS);
+	std::cout << Name::MULTITEXT << ".FIND_POS:" << find_pos << std::endl;
 
-	auto find_case = IupGetDialogChild(bt_next, "FIND_CASE");
-	auto casesensitive = IupGetInt(find_case, "VALUE");
+	auto txt = IupGetDialogChild(bt_next, Name::FIND_TEXT);
+	auto str_to_find = (char*)IupGetInt(txt, Attr::VALUE);
+
+	auto find_case = IupGetDialogChild(bt_next, Name::FIND_CASE);
+	auto casesensitive = IupGetInt(find_case, Attr::VALUE);
 
 	auto pos = str_find(str + find_pos, str_to_find, casesensitive);
 	if (pos >= 0)
@@ -263,17 +273,17 @@ int find_next_action_cb(Ihandle* bt_next)
 	{
 		auto end_pos = pos + (int)strlen(str_to_find);
 
-		IupSetInt(multitext, "FIND_POS", end_pos);
+		IupSetInt(multitext, Attr::FIND_POS, end_pos);
 
 		IupSetFocus(multitext);
-		IupSetfAttribute(multitext, "SELECTIONPOS", "%d:%d", pos, end_pos);
+		IupSetfAttribute(multitext, Attr::SELECTIONPOS, SELECTION_POS, pos, end_pos);
 
 		int lin, col;
 		IupTextConvertPosToLinCol(multitext, pos, &lin, &col);
 		IupTextConvertLinColToPos(multitext, lin, 0, &pos); /* position at col=0, just scroll lines */
-		IupSetInt(multitext, "SCROLLTOPOS", pos);
+		IupSetInt(multitext, Attr::SCROLLTOPOS, pos);
 	}
-	else IupMessage("Warning", "Text not found.");
+	else IupMessage(WARNING, NOT_FOUND);
 
 	return IUP_DEFAULT;
 }
@@ -286,38 +296,43 @@ int find_close_action_cb(Ihandle* bt_close)
 
 int item_find_action_cb(Ihandle* item_find)
 {
-	auto dlg = (Ihandle*)IupGetAttribute(item_find, "FIND_DIALOG");
+	/* Get the dialog called $FIND_DIALOG from item_find */
+	auto dlg = (Ihandle*)IupGetAttribute(item_find, Name::FIND_DIALOG);
 	if (!dlg)
 	{
-		auto multitext = IupGetDialogChild(item_find, "MULTITEXT");
+		auto multitext = IupGetDialogChild(item_find, Name::MULTITEXT);
+		std::cout << Name::MULTITEXT << ":" << multitext << std::endl;
 
-		auto txt = IupText(nullptr);
-		auto find_case = IupToggle("Case Sensitive", nullptr);
-		auto bt_next = IupButton("Close", nullptr);
-		auto bt_close = IupButton("Close", nullptr);
-		IupSetAttribute(txt, "NAME", "FIND_TEXT");
-		IupSetAttribute(txt, "VISIBLECOLUMNS", "20");
-		IupSetAttribute(find_case, "NAME", "FIND_CASE");
-		IupSetAttribute(bt_next, "PADDING", "10x2");
-		IupSetCallback(bt_next, "ACTION", (Icallback)find_next_action_cb);
-		IupSetAttribute(bt_close, "PADDING", "10x2");
-		IupSetCallback(bt_close, "ACTION", (Icallback)find_close_action_cb);
+		auto findTextField = IupText(nullptr);
+		IupSetAttribute(findTextField, Attr::NAME, Name::FIND_TEXT);
+		IupSetAttribute(findTextField, Attr::VISIBLECOLUMNS, _20);
+
+		auto find_case = IupToggle(CASE_SENSITIVE, nullptr);
+		IupSetAttribute(find_case, Attr::NAME, Name::FIND_CASE);
+
+		auto bt_next = IupButton(FIND_NEXT_TITLE, nullptr);
+		IupSetAttribute(bt_next, Attr::PADDING, P_10_X_2);
+		IupSetCallback(bt_next, Attr::ACTION, find_next_action_cb);
+
+		auto bt_close = IupButton(CLOSE_TITLE, nullptr);
+		IupSetAttribute(bt_close, Attr::PADDING, P_10_X_2);
+		IupSetCallback(bt_close, Attr::ACTION, (Icallback)find_close_action_cb);
 
 		auto bt_hbox = IupHbox(IupFill(), bt_next, bt_close, NULL);
-		auto box = IupVbox(IupLabel("Find What:"), txt, find_case,
-							IupSetAttributes(bt_hbox, "NORMALIZESIZE=HORIZONTAL"), NULL);
-		IupSetAttribute(box, "MARGIN", "10x10");
-		IupSetAttribute(box, "GAP", "5");
+		auto box = IupVbox(IupLabel(FIND_WHAT_TITLE), findTextField, find_case,
+							IupSetAttributes(bt_hbox, Attr::NORMAL_HOR), NULL);
+		IupSetAttribute(box, Attr::MARGIN, M_10_X_10);
+		IupSetAttribute(box, Attr::GAP, _5);
 
 		dlg = IupDialog(box);
-		IupSetAttribute(dlg, "TITLE", "Find");
-		IupSetAttribute(dlg, "DIALOGFRAME", "Yes");
-		IupSetAttributeHandle(dlg, "DEFAULTENTER", bt_next);
-		IupSetAttributeHandle(dlg, "DEFAULTESC", bt_close);
-		IupSetAttributeHandle(dlg, "PARENTDIALOG", IupGetDialog(item_find));
+		IupSetAttribute(dlg, Attr::TITLE, FIND_TITLE);
+		IupSetAttribute(dlg, Attr::DIALOGFRAME, Val::Y);
+		IupSetAttributeHandle(dlg, Attr::DEFAULTENTER, bt_next);
+		IupSetAttributeHandle(dlg, Attr::DEFAULTESC, bt_close);
+		IupSetAttributeHandle(dlg, Attr::PARENTDIALOG, IupGetDialog(item_find));
 
 		/* Save the multiline to access it from the callbacks */
-		IupSetAttribute(dlg, "MULTITEXT", (char*)multitext);
+		IupSetAttribute(dlg, Name::MULTITEXT, (char*)multitext);
 
 		/* Save the dialog to reuse it */
 		IupSetAttribute(item_find, "FIND_DIALOG", (char*)dlg);
@@ -330,16 +345,16 @@ int item_find_action_cb(Ihandle* item_find)
 
 int item_font_action_cb(Ihandle* item_font)
 {
-	auto multitext = IupGetDialogChild(item_font, "MULTITEXT");
+	auto multitext = IupGetDialogChild(item_font, Name::MULTITEXT);
 	auto fontdlg = IupFontDlg();
-	auto font = IupGetAttribute(multitext, "FONT");
-	IupSetStrAttribute(fontdlg, "VALUE", font);
+	auto font = IupGetAttribute(multitext, Attr::FONT);
+	IupSetStrAttribute(fontdlg, Attr::VALUE, font);
 	IupPopup(fontdlg, IUP_CENTER, IUP_CENTER);
 
-	if (IupGetInt(fontdlg, "STATUS") == 1)
+	if (IupGetInt(fontdlg, Attr::STATUS) == 1)
 	{
-		auto font_from_dlg = IupGetAttribute(fontdlg, "VALUE");
-		IupSetStrAttribute(multitext, "FONT", font_from_dlg);
+		auto font_from_dlg = IupGetAttribute(fontdlg, Attr::VALUE);
+		IupSetStrAttribute(multitext, Attr::FONT, font_from_dlg);
 	}
 
 	IupDestroy(fontdlg);
@@ -361,10 +376,11 @@ int main(int argc, char* argv[])
 {
 	IupOpen(&argc, &argv);
 
-	auto multitext = IupText(nullptr);
-	IupSetAttribute(multitext, "MULTILINE", "YES");
-	IupSetAttribute(multitext, "EXPAND", "YES");
-	IupSetAttribute(multitext, "NAME", "MULTITEXT");
+	auto multiTextField = IupText(nullptr);
+	std::cout << Name::MULTITEXT << ":" << multiTextField << std::endl;
+	IupSetAttribute(multiTextField, Attr::MULTILINE, Val::Y);
+	IupSetAttribute(multiTextField, Attr::EXPAND, Val::Y);
+	IupSetAttribute(multiTextField, Attr::NAME, Name::MULTITEXT);
 
 	auto item_open = IupItem("Open...", nullptr);
 	auto item_saveas = IupItem("Save as...", nullptr);
@@ -374,13 +390,13 @@ int main(int argc, char* argv[])
 	auto item_font = IupItem("Font...", nullptr);
 	auto item_about = IupItem("About...", nullptr);
 
-	IupSetCallback(item_open, "ACTION", (Icallback)item_open_action_cb);
-	IupSetCallback(item_saveas, "ACTION", (Icallback)item_saveas_action_cb);
-	IupSetCallback(item_exit, "ACTION", (Icallback)item_exit_action_cb);
-	IupSetCallback(item_find, "ACTION", (Icallback)item_find_action_cb);
-	IupSetCallback(item_goto, "ACTION", (Icallback)item_goto_action_cb);
-	IupSetCallback(item_font, "ACTION", (Icallback)item_font_action_cb);
-	IupSetCallback(item_about, "ACTION", (Icallback)item_about_action_cb);
+	IupSetCallback(item_open, Attr::ACTION, (Icallback)item_open_action_cb);
+	IupSetCallback(item_saveas, Attr::ACTION, (Icallback)item_saveas_action_cb);
+	IupSetCallback(item_exit, Attr::ACTION, (Icallback)item_exit_action_cb);
+	IupSetCallback(item_find, Attr::ACTION, (Icallback)item_find_action_cb);
+	IupSetCallback(item_goto, Attr::ACTION, (Icallback)item_goto_action_cb);
+	IupSetCallback(item_font, Attr::ACTION, (Icallback)item_font_action_cb);
+	IupSetCallback(item_about, Attr::ACTION, (Icallback)item_about_action_cb);
 
 	auto file_menu = IupMenu(item_open, item_saveas, IupSeparator(), item_exit, NULL);
 	auto edit_menu = IupMenu(item_find, item_goto, NULL);
@@ -394,18 +410,18 @@ int main(int argc, char* argv[])
 
 	auto menu = IupMenu(submenu_file, submenu_edit, submenu_format, submenu_help, NULL);
 
-	auto vbox = IupVbox(multitext, NULL);
+	auto vbox = IupVbox(multiTextField, NULL);
 
 	auto dlg = IupDialog(vbox);
-	IupSetAttributeHandle(dlg, "MENU", menu);
-	IupSetAttribute(dlg, "TITLE", "Simple Notepad");
-	IupSetAttribute(dlg, "SIZE", "HALFxHALF");
-
+	IupSetAttributeHandle(dlg, Attr::MENU, menu);
+	IupSetAttribute(dlg, Attr::TITLE, "Simple Notepad");
+	IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
+	
 	/* parent for pre-defined dialogs in closed functions (IupMessage) */
-	IupSetAttributeHandle(NULL, "PARENTDIALOG", dlg);
+	IupSetAttributeHandle(nullptr, Attr::PARENTDIALOG, dlg);
 
 	IupShowXY(dlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
-	IupSetAttribute(dlg, "USERSIZE", nullptr);
+	IupSetAttribute(dlg, Attr::USERSIZE, nullptr);
 
 	IupMainLoop();
 
