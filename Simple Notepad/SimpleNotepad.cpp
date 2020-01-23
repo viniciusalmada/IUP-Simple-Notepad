@@ -26,7 +26,6 @@
 #include <cctype>
 #include <cstring>
 #include "Constants.h"
-#include <iostream>
 
 namespace Utils
 {
@@ -139,7 +138,6 @@ namespace Callbacks
 	int multitextCaretCb(Ihandle* multitext, int lin, int col, int)
 	{
 		auto lblStatusbar = IupGetDialogChild(multitext, Name::STATUSBAR);
-		std::cout << lblStatusbar << std::endl;
 		IupSetfAttribute(lblStatusbar, Attr::TITLE, "Lin %d, Col %d", lin, col);
 		return IUP_DEFAULT;
 	}
@@ -314,12 +312,9 @@ namespace Callbacks
 		if (!dlg)
 		{
 			auto multitext = IupGetDialogChild(itemFind, Name::MULTITEXT);
-			std::cout << Name::MULTITEXT << ":" << multitext << std::endl;
-			std::cout << Name::ITEM_FIND << ":" << itemFind << std::endl;
 
 			auto findTextField = IupText(nullptr);
 			IupSetAttribute(findTextField, Attr::NAME, Name::FIND_TEXT);
-			std::cout << Name::FIND_TEXT << ":" << findTextField << std::endl;
 			IupSetAttribute(findTextField, Attr::VISIBLECOLUMNS, _20);
 
 			auto findCase = IupToggle(CASE_SENSITIVE, nullptr);
@@ -404,27 +399,30 @@ int main(int argc, char* argv[])
 	IupSetAttribute(lblStatusbar, Attr::EXPAND, Val::HORIZONTAL);
 	IupSetAttribute(lblStatusbar, Attr::PADDING, P_10_X_5);
 
-	auto itemOpen = IupItem("Open...", nullptr);
-	auto itemSaveas = IupItem("Save as...", nullptr);
-	auto itemExit = IupItem("Exit", nullptr);
-	auto itemFind = IupItem("Find...", nullptr);
-	auto itemGoto = IupItem("Go To...", nullptr);
-	auto itemFont = IupItem("Font...", nullptr);
-	auto itemAbout = IupItem("About...", nullptr);
+	auto itemOpen = IupItem("&Open...\tCtrl+O", nullptr);
+	auto itemSaveas = IupItem("Save &As...\tCtrl+S", nullptr);
+	auto itemExit = IupItem("E&xit", nullptr);
+	auto itemFind = IupItem("&Find...\tCtrl+F", nullptr);
+	auto itemGoto = IupItem("&Go To...\tCtrl+G", nullptr);
+	auto itemFont = IupItem("&Font...", nullptr);
+	auto itemAbout = IupItem("&About...", nullptr);
 
 	auto btnOpen = IupFlatButton(nullptr);
 	IupSetAttribute(btnOpen, Attr::IMAGE, IUP::IUP_FILE_OPEN);
 	IupSetAttribute(btnOpen, Attr::CANFOCUS, Val::N);
+	IupSetAttribute(btnOpen, Attr::TIP, "Open (Ctrl+O)");
 	IupSetAttribute(btnOpen, Attr::PADDING, M_5_X_5);
 
 	auto btnSave = IupFlatButton(nullptr);
 	IupSetAttribute(btnSave, Attr::IMAGE, IUP::IUP_FILE_SAVE);
 	IupSetAttribute(btnSave, Attr::CANFOCUS, Val::N);
+	IupSetAttribute(btnSave, Attr::TIP, "Save (Ctrl+S)");
 	IupSetAttribute(btnSave, Attr::PADDING, M_5_X_5);
 
 	auto btnFind = IupFlatButton(nullptr);
 	IupSetAttribute(btnFind, Attr::IMAGE, IUP::IUP_EDIT_FIND);
 	IupSetAttribute(btnFind, Attr::CANFOCUS, Val::N);
+	IupSetAttribute(btnFind, Attr::TIP, "Find (Ctrl+F)");
 	IupSetAttribute(btnFind, Attr::PADDING, M_5_X_5);
 
 	auto sepVertical = IupSetAttributes(IupLabel(nullptr), "SEPARATOR=VERTICAL");
@@ -448,10 +446,10 @@ int main(int argc, char* argv[])
 	auto formatMenu = IupMenu(itemFont, NULL);
 	auto helpMenu = IupMenu(itemAbout, NULL);
 
-	auto submenuFile = IupSubmenu("File", fileMenu);
-	auto submenuEdit = IupSubmenu("Edit", editMenu);
-	auto submenuFormat = IupSubmenu("Format", formatMenu);
-	auto submenuHelp = IupSubmenu("Help", helpMenu);
+	auto submenuFile = IupSubmenu("&File", fileMenu);
+	auto submenuEdit = IupSubmenu("&Edit", editMenu);
+	auto submenuFormat = IupSubmenu("F&ormat", formatMenu);
+	auto submenuHelp = IupSubmenu("&Help", helpMenu);
 
 	auto menu = IupMenu(submenuFile, submenuEdit, submenuFormat, submenuHelp, NULL);
 
@@ -464,6 +462,11 @@ int main(int argc, char* argv[])
 
 	/* parent for pre-defined dialogs in closed functions (IupMessage) */
 	IupSetAttributeHandle(nullptr, Attr::PARENTDIALOG, dlg);
+
+	IupSetCallback(dlg, "K_cO", Callbacks::itemOpenActionCb);
+	IupSetCallback(dlg, "K_cS", Callbacks::itemSaveasActionCb);
+	IupSetCallback(dlg, "K_cF", Callbacks::itemFindActionCb);
+	IupSetCallback(dlg, "K_cG", Callbacks::itemGotoActionCb);
 
 	IupShowXY(dlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 	IupSetAttribute(dlg, Attr::USERSIZE, nullptr);
