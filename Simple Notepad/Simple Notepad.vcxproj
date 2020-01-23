@@ -29,6 +29,9 @@
   <ItemGroup>
     <ClCompile Include="SimpleNotepad.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Constants.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F33780AC-1749-4F6E-AE0E-FD45AD501805}</ProjectGuid>
     <RootNamespace>Simple_Notepad</RootNamespace>
@@ -103,24 +106,28 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\iup\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>T:\lib\mgeo\iup\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\iup\iup.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>T:\lib\mgeo\iup\lib\dll12_64\iup.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy "C:\iup\iup.dll" "$(OutDir)\iup.dll"</Command>
+      <Command>copy "T:\lib\mgeo\iup\lib\dll12_64\iup.dll" "$(OutDir)\iup.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\iup\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>T:\lib\mgeo\iup\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\iup\iup.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>T:\lib\mgeo\iup\lib\dll12_64\iup.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy "C:\iup\iup.dll" "$(OutDir)\iup.dll"</Command>
+      <Command>copy "T:\lib\mgeo\iup\lib\dll12_64\iup.dll" "$(OutDir)\iup.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
