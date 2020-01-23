@@ -13,7 +13,6 @@
  * -Custom dialogs for Find and Go to 
  */
 // ReSharper disable CppLocalVariableMayBeConst
-// ReSharper disable CppInconsistentNaming
 // ReSharper disable CppCStyleCast
 // ReSharper disable CppDeprecatedEntity
 // ReSharper disable CppParameterMayBeConst
@@ -26,7 +25,7 @@
 #include "Constants.h"
 #include <iostream>
 
-int str_compare(const char* l, const char* r, int case_sensitive)
+int stringCompare(const char* l, const char* r, int case_sensitive)
 {
 	if (!l || !r) return 0;
 
@@ -61,13 +60,13 @@ int str_compare(const char* l, const char* r, int case_sensitive)
 	return 0;
 }
 
-int str_find(const char* str, const char* str_to_find, int casesensitive)
+int findString(const char* str, const char* strToFind, int casesensitive)
 {
-	if (!str || str[0] == 0 || !str_to_find || str_to_find[0] == 0) return -1;
+	if (!str || str[0] == 0 || !strToFind || strToFind[0] == 0) return -1;
 
-	auto str_len = (int)strlen(str);
-	auto str_to_find_len = (int)strlen(str_to_find);
-	auto count = str_len - str_to_find_len;
+	auto strLen = (int)strlen(str);
+	auto strToFindLen = (int)strlen(strToFind);
+	auto count = strLen - strToFindLen;
 
 	if (count < 0) return -1;
 
@@ -75,7 +74,7 @@ int str_find(const char* str, const char* str_to_find, int casesensitive)
 
 	for (auto i = 0; i < count; i++)
 	{
-		if (str_compare(str, str_to_find, casesensitive)) return i;
+		if (stringCompare(str, strToFind, casesensitive)) return i;
 
 		str++;
 	}
@@ -83,7 +82,7 @@ int str_find(const char* str, const char* str_to_find, int casesensitive)
 	return -1;
 }
 
-char* read_file(const char* filename)
+char* readFile(const char* filename)
 {
 	const auto file = fopen(filename, "rb");
 	if (!file)
@@ -110,7 +109,7 @@ char* read_file(const char* filename)
 	return textFromFile;
 }
 
-void write_file(const char* filename, const char* str, int count)
+void writeFile(const char* filename, const char* str, int count)
 {
 	auto file = fopen(filename, "w");
 	if (!file)
@@ -129,20 +128,20 @@ void write_file(const char* filename, const char* str, int count)
 	fclose(file);
 }
 
-int item_open_action_cb(Ihandle* item_open)
+int itemOpenActionCb(Ihandle* itemOpen)
 {
-	auto multitext = IupGetDialogChild(item_open, Name::MULTITEXT);
+	auto multitext = IupGetDialogChild(itemOpen, Name::MULTITEXT);
 	auto filedlg = IupFileDlg();
 	IupSetAttribute(filedlg, Attr::DIALOGTYPE, Val::OPEN);
 	IupSetAttribute(filedlg, Attr::EXTFILTER, Val::TXT_FILES);
-	IupSetAttributeHandle(filedlg, Attr::PARENTDIALOG, IupGetDialog(item_open));
+	IupSetAttributeHandle(filedlg, Attr::PARENTDIALOG, IupGetDialog(itemOpen));
 
 	IupPopup(filedlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 
 	if (IupGetInt(filedlg, Attr::STATUS) != -1)
 	{
 		auto filename = IupGetAttribute(filedlg, Attr::VALUE);
-		auto str = read_file(filename);
+		auto str = readFile(filename);
 		if (str)
 		{
 			IupSetStrAttribute(multitext, Attr::VALUE, str);
@@ -154,13 +153,13 @@ int item_open_action_cb(Ihandle* item_open)
 	return IUP_DEFAULT;
 }
 
-int item_saveas_action_cb(Ihandle* item_saveas)
+int itemSaveasActionCb(Ihandle* itemSaveas)
 {
-	auto multitext = IupGetDialogChild(item_saveas, Name::MULTITEXT);
+	auto multitext = IupGetDialogChild(itemSaveas, Name::MULTITEXT);
 	auto filedlg = IupFileDlg();
 	IupSetAttribute(filedlg, Attr::DIALOGTYPE, Val::SAVE);
 	IupSetAttribute(filedlg, Attr::EXTFILTER, Val::TXT_FILES);
-	IupSetAttributeHandle(filedlg, Attr::PARENTDIALOG, IupGetDialog(item_saveas));
+	IupSetAttributeHandle(filedlg, Attr::PARENTDIALOG, IupGetDialog(itemSaveas));
 
 	IupPopup(filedlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 
@@ -169,67 +168,67 @@ int item_saveas_action_cb(Ihandle* item_saveas)
 		auto filename = IupGetAttribute(filedlg, Attr::VALUE);
 		auto str = IupGetAttribute(multitext, Attr::VALUE);
 		auto count = IupGetInt(multitext, Attr::COUNT);
-		write_file(filename, str, count);
+		writeFile(filename, str, count);
 	}
 
 	IupDestroy(filedlg);
 	return IUP_DEFAULT;
 }
 
-int goto_ok_action_cb(Ihandle* bt_ok)
+int gotoOkActionCb(Ihandle* btOk)
 {
-	auto line_count = IupGetInt(bt_ok, Attr::TEXT_LINECOUNT);
-	auto txt = IupGetDialogChild(bt_ok, Name::LINE_TEXT);
+	auto lineCount = IupGetInt(btOk, Attr::TEXT_LINECOUNT);
+	auto txt = IupGetDialogChild(btOk, Name::LINE_TEXT);
 	auto line = IupGetInt(txt, Attr::VALUE);
-	if (line < 1 || line >= line_count)
+	if (line < 1 || line >= lineCount)
 	{
 		IupMessage(ERROR, INVALID_LINE_NUM);
 		return IUP_DEFAULT;
 	}
 
-	IupSetAttribute(IupGetDialog(bt_ok), Attr::STATUS, Val::ONE);
+	IupSetAttribute(IupGetDialog(btOk), Attr::STATUS, Val::ONE);
 	return IUP_CLOSE;
 }
 
-int goto_cancel_action_cb(Ihandle* bt_ok)
+int gotoCancelActionCb(Ihandle* btOk)
 {
-	IupSetAttribute(IupGetDialog(bt_ok), Attr::STATUS, Val::ZERO);
+	IupSetAttribute(IupGetDialog(btOk), Attr::STATUS, Val::ZERO);
 	return IUP_CLOSE;
 }
 
-int item_goto_action_cb(Ihandle* item_goto)
+int itemGotoActionCb(Ihandle* itemGoto)
 {
-	auto multitext = IupGetDialogChild(item_goto, Name::MULTITEXT);
-	auto line_count = IupGetInt(multitext, Attr::LINECOUNT);
+	auto multitext = IupGetDialogChild(itemGoto, Name::MULTITEXT);
+	auto lineCount = IupGetInt(multitext, Attr::LINECOUNT);
 
 	auto lbl = IupLabel(nullptr);
-	IupSetfAttribute(lbl, Attr::TITLE, LINE_NUM_F, line_count);
+	IupSetfAttribute(lbl, Attr::TITLE, LINE_NUM_F, lineCount);
 	
 	auto txt = IupText(nullptr);
 	IupSetAttribute(txt, Attr::MASK, IUP_MASK_UINT); /* unsigned integers numbers only */
 	IupSetAttribute(txt, Attr::NAME, Name::LINE_TEXT);
 	IupSetAttribute(txt, Attr::VISIBLECOLUMNS, _20);
 
-	auto bt_ok = IupButton(OK, nullptr);
-	IupSetInt(bt_ok, Attr::TEXT_LINECOUNT, line_count);
-	IupSetAttribute(bt_ok, Attr::PADDING, P_10_X_2);
-	IupSetCallback(bt_ok, Attr::ACTION, (Icallback)goto_cancel_action_cb);
+	auto btOk = IupButton(OK, nullptr);
+	IupSetInt(btOk, Attr::TEXT_LINECOUNT, lineCount);
+	IupSetAttribute(btOk, Attr::PADDING, P_10_X_2);
+	IupSetCallback(btOk, Attr::ACTION, gotoOkActionCb);
 
-	auto bt_cancel = IupButton(CANCEL, nullptr);
-	IupSetCallback(bt_cancel, Attr::ACTION, (Icallback)goto_cancel_action_cb);
-	IupSetAttribute(bt_cancel, Attr::PADDING, P_10_X_2);
+	auto btCancel = IupButton(CANCEL, nullptr);
+	IupSetCallback(btCancel, Attr::ACTION, gotoCancelActionCb);
+	IupSetAttribute(btCancel, Attr::PADDING, P_10_X_2);
 
-	auto bt_hbox = IupHbox(IupFill(), bt_ok, bt_cancel, NULL);
-	auto box = IupVbox(lbl, txt, IupSetAttributes(bt_hbox, Attr::NORMAL_HOR), NULL);
+	auto btHbox = IupHbox(IupFill(), btOk, btCancel, NULL);
+	auto box = IupVbox(lbl, txt, IupSetAttributes(btHbox, Attr::NORMAL_HOR), NULL);
 	IupSetAttribute(box, Attr::MARGIN, M_10_X_10);
 	IupSetAttribute(box, Attr::GAP, _5);
 
 	auto dlg = IupDialog(box);
 	IupSetAttribute(dlg, Attr::TITLE,GO_TO);
 	IupSetAttribute(dlg, Attr::DIALOGFRAME, Val::Y);
-	IupSetAttributeHandle(dlg, Attr::DEFAULTENTER, bt_ok);
-	IupSetAttributeHandle(dlg, Attr::DEFAULTESC, bt_cancel);
-	IupSetAttributeHandle(dlg, Attr::PARENTDIALOG, IupGetDialog(item_goto));
+	IupSetAttributeHandle(dlg, Attr::DEFAULTENTER, btOk);
+	IupSetAttributeHandle(dlg, Attr::DEFAULTESC, btCancel);
+	IupSetAttributeHandle(dlg, Attr::PARENTDIALOG, IupGetDialog(itemGoto));
 
 	IupPopup(dlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 
@@ -247,36 +246,33 @@ int item_goto_action_cb(Ihandle* item_goto)
 	return IUP_DEFAULT;
 }
 
-int find_next_action_cb(Ihandle* bt_next)
+int findNextActionCb(Ihandle* btNext)
 {
-	auto multitext = (Ihandle*)IupGetAttribute(bt_next, Name::MULTITEXT);
-	std::cout << Name::MULTITEXT << ":" << multitext << std::endl;
+	auto multitext = (Ihandle*)IupGetAttribute(btNext, Name::MULTITEXT);
 
-	auto str = IupGetAttribute(multitext, Attr::VALUE);
-	std::cout << Name::MULTITEXT << ".VALUE:" << str << std::endl;
-	auto find_pos = IupGetInt(multitext, Attr::FIND_POS);
-	std::cout << Name::MULTITEXT << ".FIND_POS:" << find_pos << std::endl;
+	auto valueMultitext = IupGetAttribute(multitext, Attr::VALUE);
+	auto findPos = IupGetInt(multitext, Attr::FIND_POS);
 
-	auto txt = IupGetDialogChild(bt_next, Name::FIND_TEXT);
-	auto str_to_find = (char*)IupGetInt(txt, Attr::VALUE);
+	auto findTextField = IupGetDialogChild(btNext, Name::FIND_TEXT);
+	auto strToFind = IupGetAttribute(findTextField, Attr::VALUE);
 
-	auto find_case = IupGetDialogChild(bt_next, Name::FIND_CASE);
-	auto casesensitive = IupGetInt(find_case, Attr::VALUE);
+	auto findCase = IupGetDialogChild(btNext, Name::FIND_CASE);
+	auto casesensitive = IupGetInt(findCase, Attr::VALUE);
 
-	auto pos = str_find(str + find_pos, str_to_find, casesensitive);
+	auto pos = findString(valueMultitext + findPos, strToFind, casesensitive);
 	if (pos >= 0)
-		pos += find_pos;
-	else if (find_pos > 0)
-		pos = str_find(str, str_to_find, casesensitive); /* try again from the start */
+		pos += findPos;
+	else if (findPos > 0)
+		pos = findString(valueMultitext, strToFind, casesensitive); /* try again from the start */
 
 	if (pos >= 0)
 	{
-		auto end_pos = pos + (int)strlen(str_to_find);
+		auto endPos = pos + (int)strlen(strToFind);
 
-		IupSetInt(multitext, Attr::FIND_POS, end_pos);
+		IupSetInt(multitext, Attr::FIND_POS, endPos);
 
 		IupSetFocus(multitext);
-		IupSetfAttribute(multitext, Attr::SELECTIONPOS, SELECTION_POS, pos, end_pos);
+		IupSetfAttribute(multitext, Attr::SELECTIONPOS, SELECTION_POS, pos, endPos);
 
 		int lin, col;
 		IupTextConvertPosToLinCol(multitext, pos, &lin, &col);
@@ -288,54 +284,57 @@ int find_next_action_cb(Ihandle* bt_next)
 	return IUP_DEFAULT;
 }
 
-int find_close_action_cb(Ihandle* bt_close)
+int findCloseActionCb(Ihandle* btClose)
 {
-	IupHide(IupGetDialog(bt_close));
+	/* To avoid that the find dialog closes, this command only hide for next uses */
+	IupHide(IupGetDialog(btClose));
 	return IUP_DEFAULT;
 }
 
-int item_find_action_cb(Ihandle* item_find)
+int itemFindActionCb(Ihandle* itemFind)
 {
 	/* Get the dialog called $FIND_DIALOG from item_find */
-	auto dlg = (Ihandle*)IupGetAttribute(item_find, Name::FIND_DIALOG);
+	auto dlg = (Ihandle*)IupGetAttribute(itemFind, Name::FIND_DIALOG);
 	if (!dlg)
 	{
-		auto multitext = IupGetDialogChild(item_find, Name::MULTITEXT);
+		auto multitext = IupGetDialogChild(itemFind, Name::MULTITEXT);
 		std::cout << Name::MULTITEXT << ":" << multitext << std::endl;
+		std::cout << Name::ITEM_FIND << ":" << itemFind << std::endl;
 
 		auto findTextField = IupText(nullptr);
 		IupSetAttribute(findTextField, Attr::NAME, Name::FIND_TEXT);
+		std::cout << Name::FIND_TEXT << ":" << findTextField << std::endl;
 		IupSetAttribute(findTextField, Attr::VISIBLECOLUMNS, _20);
 
-		auto find_case = IupToggle(CASE_SENSITIVE, nullptr);
-		IupSetAttribute(find_case, Attr::NAME, Name::FIND_CASE);
+		auto findCase = IupToggle(CASE_SENSITIVE, nullptr);
+		IupSetAttribute(findCase, Attr::NAME, Name::FIND_CASE);
 
-		auto bt_next = IupButton(FIND_NEXT_TITLE, nullptr);
-		IupSetAttribute(bt_next, Attr::PADDING, P_10_X_2);
-		IupSetCallback(bt_next, Attr::ACTION, find_next_action_cb);
+		auto btNext = IupButton(FIND_NEXT_TITLE, nullptr);
+		IupSetAttribute(btNext, Attr::PADDING, P_10_X_2);
+		IupSetCallback(btNext, Attr::ACTION, findNextActionCb);
 
-		auto bt_close = IupButton(CLOSE_TITLE, nullptr);
-		IupSetAttribute(bt_close, Attr::PADDING, P_10_X_2);
-		IupSetCallback(bt_close, Attr::ACTION, (Icallback)find_close_action_cb);
+		auto btClose = IupButton(CLOSE_TITLE, nullptr);
+		IupSetAttribute(btClose, Attr::PADDING, P_10_X_2);
+		IupSetCallback(btClose, Attr::ACTION, findCloseActionCb);
 
-		auto bt_hbox = IupHbox(IupFill(), bt_next, bt_close, NULL);
-		auto box = IupVbox(IupLabel(FIND_WHAT_TITLE), findTextField, find_case,
-							IupSetAttributes(bt_hbox, Attr::NORMAL_HOR), NULL);
+		auto btHbox = IupHbox(IupFill(), btNext, btClose, NULL);
+		auto box = IupVbox(IupLabel(FIND_WHAT_TITLE), findTextField, findCase,
+							IupSetAttributes(btHbox, Attr::NORMAL_HOR), NULL);
 		IupSetAttribute(box, Attr::MARGIN, M_10_X_10);
 		IupSetAttribute(box, Attr::GAP, _5);
 
 		dlg = IupDialog(box);
 		IupSetAttribute(dlg, Attr::TITLE, FIND_TITLE);
 		IupSetAttribute(dlg, Attr::DIALOGFRAME, Val::Y);
-		IupSetAttributeHandle(dlg, Attr::DEFAULTENTER, bt_next);
-		IupSetAttributeHandle(dlg, Attr::DEFAULTESC, bt_close);
-		IupSetAttributeHandle(dlg, Attr::PARENTDIALOG, IupGetDialog(item_find));
+		IupSetAttributeHandle(dlg, Attr::DEFAULTENTER, btNext);
+		IupSetAttributeHandle(dlg, Attr::DEFAULTESC, btClose);
+		IupSetAttributeHandle(dlg, Attr::PARENTDIALOG, IupGetDialog(itemFind));
 
 		/* Save the multiline to access it from the callbacks */
 		IupSetAttribute(dlg, Name::MULTITEXT, (char*)multitext);
 
 		/* Save the dialog to reuse it */
-		IupSetAttribute(item_find, "FIND_DIALOG", (char*)dlg);
+		IupSetAttribute(itemFind, Name::FIND_DIALOG, (char*)dlg);
 	}
 	/* centerparent first time, next time reuse the last position */
 	IupShowXY(dlg, IUP_CURRENT, IUP_CURRENT);
@@ -343,9 +342,9 @@ int item_find_action_cb(Ihandle* item_find)
 	return IUP_DEFAULT;
 }
 
-int item_font_action_cb(Ihandle* item_font)
+int itemFontActionCb(Ihandle* itemFont)
 {
-	auto multitext = IupGetDialogChild(item_font, Name::MULTITEXT);
+	auto multitext = IupGetDialogChild(itemFont, Name::MULTITEXT);
 	auto fontdlg = IupFontDlg();
 	auto font = IupGetAttribute(multitext, Attr::FONT);
 	IupSetStrAttribute(fontdlg, Attr::VALUE, font);
@@ -353,21 +352,21 @@ int item_font_action_cb(Ihandle* item_font)
 
 	if (IupGetInt(fontdlg, Attr::STATUS) == 1)
 	{
-		auto font_from_dlg = IupGetAttribute(fontdlg, Attr::VALUE);
-		IupSetStrAttribute(multitext, Attr::FONT, font_from_dlg);
+		auto fontFromDlg = IupGetAttribute(fontdlg, Attr::VALUE);
+		IupSetStrAttribute(multitext, Attr::FONT, fontFromDlg);
 	}
 
 	IupDestroy(fontdlg);
 	return IUP_DEFAULT;
 }
 
-int item_about_action_cb()
+int itemAboutActionCb(Ihandle* ignored)
 {
 	IupMessage("About", "Simple Notepad\nAuthor:\nVinicius Almada");
 	return IUP_DEFAULT;
 }
 
-int item_exit_action_cb()
+int itemExitActionCb(Ihandle* ignored)
 {
 	return IUP_CLOSE;
 }
@@ -377,7 +376,6 @@ int main(int argc, char* argv[])
 	IupOpen(&argc, &argv);
 
 	auto multiTextField = IupText(nullptr);
-	std::cout << Name::MULTITEXT << ":" << multiTextField << std::endl;
 	IupSetAttribute(multiTextField, Attr::MULTILINE, Val::Y);
 	IupSetAttribute(multiTextField, Attr::EXPAND, Val::Y);
 	IupSetAttribute(multiTextField, Attr::NAME, Name::MULTITEXT);
@@ -390,25 +388,25 @@ int main(int argc, char* argv[])
 	auto item_font = IupItem("Font...", nullptr);
 	auto item_about = IupItem("About...", nullptr);
 
-	IupSetCallback(item_open, Attr::ACTION, (Icallback)item_open_action_cb);
-	IupSetCallback(item_saveas, Attr::ACTION, (Icallback)item_saveas_action_cb);
-	IupSetCallback(item_exit, Attr::ACTION, (Icallback)item_exit_action_cb);
-	IupSetCallback(item_find, Attr::ACTION, (Icallback)item_find_action_cb);
-	IupSetCallback(item_goto, Attr::ACTION, (Icallback)item_goto_action_cb);
-	IupSetCallback(item_font, Attr::ACTION, (Icallback)item_font_action_cb);
-	IupSetCallback(item_about, Attr::ACTION, (Icallback)item_about_action_cb);
+	IupSetCallback(item_open, Attr::ACTION, itemOpenActionCb);
+	IupSetCallback(item_saveas, Attr::ACTION, itemSaveasActionCb);
+	IupSetCallback(item_exit, Attr::ACTION, itemExitActionCb);
+	IupSetCallback(item_find, Attr::ACTION, itemFindActionCb);
+	IupSetCallback(item_goto, Attr::ACTION, itemGotoActionCb);
+	IupSetCallback(item_font, Attr::ACTION, itemFontActionCb);
+	IupSetCallback(item_about, Attr::ACTION, itemAboutActionCb);
 
-	auto file_menu = IupMenu(item_open, item_saveas, IupSeparator(), item_exit, NULL);
-	auto edit_menu = IupMenu(item_find, item_goto, NULL);
-	auto format_menu = IupMenu(item_font, NULL);
-	auto help_menu = IupMenu(item_about, NULL);
+	auto fileMenu = IupMenu(item_open, item_saveas, IupSeparator(), item_exit, NULL);
+	auto editMenu = IupMenu(item_find, item_goto, NULL);
+	auto formatMenu = IupMenu(item_font, NULL);
+	auto helpMenu = IupMenu(item_about, NULL);
 
-	auto submenu_file = IupSubmenu("File", file_menu);
-	auto submenu_edit = IupSubmenu("Edit", edit_menu);
-	auto submenu_format = IupSubmenu("Format", format_menu);
-	auto submenu_help = IupSubmenu("Help", help_menu);
+	auto submenuFile = IupSubmenu("File", fileMenu);
+	auto submenuEdit = IupSubmenu("Edit", editMenu);
+	auto submenuFormat = IupSubmenu("Format", formatMenu);
+	auto submenuHelp = IupSubmenu("Help", helpMenu);
 
-	auto menu = IupMenu(submenu_file, submenu_edit, submenu_format, submenu_help, NULL);
+	auto menu = IupMenu(submenuFile, submenuEdit, submenuFormat, submenuHelp, NULL);
 
 	auto vbox = IupVbox(multiTextField, NULL);
 

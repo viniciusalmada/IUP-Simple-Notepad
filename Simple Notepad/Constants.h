@@ -50,6 +50,7 @@ namespace Name
 	const auto FIND_TEXT = "FIND_TEXT";
 	const auto FIND_CASE = "FIND_CASE";
 	const auto FIND_DIALOG = "FIND_DIALOG";
+	const auto ITEM_FIND = "ITEM_FIND";
 }
 
 const auto ERROR = "Error";
