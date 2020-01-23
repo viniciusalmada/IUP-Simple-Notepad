@@ -148,6 +148,49 @@ namespace Utils
 
 namespace Callbacks
 {
+	int itemCopyActionCb(Ihandle* itemCopy)
+	{
+		Ihandle* multitext = IupGetDialogChild(itemCopy, Name::MULTITEXT);
+		Ihandle *clipboard = IupClipboard();
+		IupSetAttribute(clipboard, Attr::TEXT, IupGetAttribute(multitext, Attr::SELECTEDTEXT));
+		IupDestroy(clipboard);
+		return IUP_DEFAULT;
+	}
+
+	int itemPasteActionCb(Ihandle* itemPaste)
+	{
+		Ihandle* multitext = IupGetDialogChild(itemPaste, Name::MULTITEXT);
+		Ihandle *clipboard = IupClipboard();
+		IupSetAttribute(multitext, Attr::INSERT, IupGetAttribute(clipboard, Attr::TEXT));
+		IupDestroy(clipboard);
+		return IUP_DEFAULT;
+	}
+
+	int itemCutActionCb(Ihandle* itemCut)
+	{
+		Ihandle* multitext = IupGetDialogChild(itemCut, Name::MULTITEXT);
+		Ihandle *clipboard = IupClipboard();
+		IupSetAttribute(clipboard, Attr::TEXT, IupGetAttribute(multitext, Attr::SELECTEDTEXT));
+		IupSetAttribute(multitext, Attr::SELECTEDTEXT, "");
+		IupDestroy(clipboard);
+		return IUP_DEFAULT;
+	}
+
+	int itemDeleteActionCb(Ihandle* itemDelete)
+	{
+		Ihandle* multitext = IupGetDialogChild(itemDelete, Name::MULTITEXT);
+		IupSetAttribute(multitext, Attr::SELECTEDTEXT, "");
+		return IUP_DEFAULT;
+	}
+
+	int itemSelectAllActionCb(Ihandle* itemSelectAll)
+	{
+		Ihandle* multitext = IupGetDialogChild(itemSelectAll, Name::MULTITEXT);
+		IupSetFocus(multitext);
+		IupSetAttribute(multitext, Attr::SELECTION, Val::ALL);
+		return IUP_DEFAULT;
+	}
+	
 	int editMenuOpenCb(Ihandle* open)
 	{
 		auto clipboard = IupClipboard();
@@ -174,6 +217,7 @@ namespace Callbacks
 			IupSetAttribute(itemDelete, Attr::ACTIVE, Val::N);
 		}
 
+		/* Each IupClipboard should be destroyed using IupDestroy */
 		IupDestroy(clipboard);
 
 		return IUP_DEFAULT;
@@ -487,6 +531,17 @@ int main(int argc, char* argv[])
 	auto itemFont = IupItem("&Font...", nullptr);
 	auto itemAbout = IupItem("&About...", nullptr);
 
+	auto itemCopy = IupItem("Copy\tCtrl+C", nullptr);
+	auto itemCut = IupItem("Cut\tCtrl+X", nullptr);
+	auto itemPaste = IupItem("Paste\tCtrl+V", nullptr);
+	auto itemDelete = IupItem("Delete\tDel", nullptr);
+	auto itemSelectAll = IupItem("Select All\tCtrl+A", nullptr);
+	
+	IupSetAttribute(itemCopy, Attr::NAME, Name::ITEM_COPY);
+	IupSetAttribute(itemCut, Attr::NAME, Name::ITEM_CUT);
+	IupSetAttribute(itemPaste, Attr::NAME, Name::ITEM_PASTE);
+	IupSetAttribute(itemDelete, Attr::NAME, Name::ITEM_DELETE);
+
 	auto btnOpen = IupFlatButton(nullptr);
 	IupSetAttribute(btnOpen, Attr::IMAGE, IUP::IUP_FILE_OPEN);
 	IupSetAttribute(btnOpen, Attr::CANFOCUS, Val::N);
@@ -520,6 +575,11 @@ int main(int argc, char* argv[])
 	IupSetCallback(itemGoto, Attr::ACTION, Callbacks::itemGotoActionCb);
 	IupSetCallback(itemFont, Attr::ACTION, Callbacks::itemFontActionCb);
 	IupSetCallback(itemAbout, Attr::ACTION, Callbacks::itemAboutActionCb);
+	IupSetCallback(itemCopy, Attr::ACTION, Callbacks::itemCopyActionCb);
+	IupSetCallback(itemCut, Attr::ACTION, Callbacks::itemCutActionCb);
+	IupSetCallback(itemPaste, Attr::ACTION, Callbacks::itemPasteActionCb);
+	IupSetCallback(itemDelete, Attr::ACTION, Callbacks::itemDeleteActionCb);
+	IupSetCallback(itemSelectAll, Attr::ACTION, Callbacks::itemSelectAllActionCb);
 
 	auto recentMenu = IupMenu(nullptr);
 	auto submenuRecent = IupSubmenu("Recent &Files", recentMenu);

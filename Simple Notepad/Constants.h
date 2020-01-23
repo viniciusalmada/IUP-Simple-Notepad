@@ -40,6 +40,12 @@ namespace Attr
 	const auto APP_NAME = "APP_NAME";
 	const auto CLOSE_CB = "CLOSE_CB";
 	const auto CONFIG = "CONFIG";
+	const auto TEXTAVAILABLE = "TEXTAVAILABLE";
+	const auto ACTIVE = "ACTIVE";
+	const auto SELECTEDTEXT = "SELECTEDTEXT";
+	const auto TEXT = "TEXT";
+	const auto INSERT = "INSERT";
+	const auto SELECTION = "SELECTION";
 }
 
 namespace Val
@@ -52,6 +58,7 @@ namespace Val
 	const auto Y = "Yes";
 	const auto HORIZONTAL = "HORIZONTAL";
 	const auto N = "No";
+	const auto ALL = "ALL";
 }
 
 namespace Name
@@ -63,6 +70,10 @@ namespace Name
 	const auto FIND_DIALOG = "FIND_DIALOG";
 	const auto ITEM_FIND = "ITEM_FIND";
 	const auto STATUSBAR = "STATUSBAR";
+	const auto ITEM_PASTE = "ITEM_PASTE";
+	const auto ITEM_CUT = "ITEM_CUT";
+	const auto ITEM_DELETE = "ITEM_DELETE";
+	const auto ITEM_COPY = "ITEM_COPY";
 }
 
 namespace IUP
