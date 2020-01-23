@@ -26,7 +26,9 @@
 #include <cstring>
 
 #include "iup.h"
+#include "iup_config.h"
 #include "Constants.h"
+#include <iostream>
 
 namespace Utils
 {
@@ -114,13 +116,13 @@ namespace Utils
 		return textFromFile;
 	}
 
-	void writeFile(const char* filename, const char* str, int count)
+	int writeFile(const char* filename, const char* str, int count)
 	{
 		auto file = fopen(filename, "w");
 		if (!file)
 		{
 			IupMessagef("Error", "Can't open file: %s", filename);
-			return;
+			return 0;
 		}
 
 		fwrite(str, 1, count, file);
@@ -131,6 +133,7 @@ namespace Utils
 		}
 
 		fclose(file);
+		return 1;
 	}
 }
 
@@ -148,7 +151,7 @@ namespace Callbacks
 		}
 		return IUP_DEFAULT;
 	}
-	
+
 	int multitextCaretCb(Ihandle* multitext, int lin, int col, int)
 	{
 		auto lblStatusbar = IupGetDialogChild(multitext, Name::STATUSBAR);
@@ -172,6 +175,9 @@ namespace Callbacks
 			auto str = Utils::readFile(filename);
 			if (str)
 			{
+				auto config = (Ihandle*)IupGetAttribute(multitext, Attr::CONFIG);
+				IupConfigRecentUpdate(config, filename);
+
 				IupSetStrAttribute(multitext, Attr::VALUE, str);
 				delete str;
 			}
@@ -196,7 +202,11 @@ namespace Callbacks
 			auto filename = IupGetAttribute(filedlg, Attr::VALUE);
 			auto str = IupGetAttribute(multitext, Attr::VALUE);
 			auto count = IupGetInt(multitext, Attr::COUNT);
-			Utils::writeFile(filename, str, count);
+			if (Utils::writeFile(filename, str, count))
+			{
+				auto config = (Ihandle*)IupGetAttribute(multitext, Attr::CONFIG);
+				IupConfigRecentUpdate(config, filename);
+			}
 		}
 
 		IupDestroy(filedlg);
@@ -379,6 +389,9 @@ namespace Callbacks
 		{
 			auto fontFromDlg = IupGetAttribute(fontdlg, Attr::VALUE);
 			IupSetStrAttribute(multitext, Attr::FONT, fontFromDlg);
+
+			auto config = (Ihandle*)IupGetAttribute(multitext, Attr::CONFIG);
+			IupConfigSetVariableStr(config, Group::MAIN_WINDOW, Key::FONT, fontFromDlg);
 		}
 
 		IupDestroy(fontdlg);
@@ -391,8 +404,14 @@ namespace Callbacks
 		return IUP_DEFAULT;
 	}
 
-	int itemExitActionCb(Ihandle*)
+	int itemExitActionCb(Ihandle* itemExit)
 	{
+		auto dlg = IupGetDialog(itemExit);
+		auto config = (Ihandle*)IupGetAttribute(dlg, Attr::CONFIG);
+		std::cout << config << std::endl;
+		IupConfigDialogClosed(config, dlg, Group::MAIN_WINDOW);
+		IupConfigSave(config);
+		IupDestroy(config);
 		return IUP_CLOSE;
 	}
 }
@@ -402,11 +421,18 @@ int main(int argc, char* argv[])
 	IupOpen(&argc, &argv);
 	IupImageLibOpen();
 
+	auto config = IupConfig();
+	IupSetAttribute(config, Attr::APP_NAME, "simple_notepad");
+	IupConfigLoad(config);
+
 	auto multiTextField = IupText(nullptr);
 	IupSetAttribute(multiTextField, Attr::MULTILINE, Val::Y);
 	IupSetAttribute(multiTextField, Attr::EXPAND, Val::Y);
 	IupSetAttribute(multiTextField, Attr::NAME, Name::MULTITEXT);
 	IupSetCallback(multiTextField, Attr::CARET_CB, (Icallback)Callbacks::multitextCaretCb);
+
+	auto font = IupConfigGetVariableStr(config, Group::MAIN_WINDOW, Key::FONT);
+	if (font) IupSetStrAttribute(multiTextField, Attr::FONT, font);
 
 	auto lblStatusbar = IupLabel("Lin 1, Col 1");
 	IupSetAttribute(lblStatusbar, Attr::NAME, Name::STATUSBAR);
@@ -455,7 +481,10 @@ int main(int argc, char* argv[])
 	IupSetCallback(itemFont, Attr::ACTION, Callbacks::itemFontActionCb);
 	IupSetCallback(itemAbout, Attr::ACTION, Callbacks::itemAboutActionCb);
 
-	auto fileMenu = IupMenu(itemOpen, itemSaveas, IupSeparator(), itemExit, NULL);
+	auto recentMenu = IupMenu(nullptr);
+	auto submenuRecent = IupSubmenu("Recent &Files", recentMenu);
+
+	auto fileMenu = IupMenu(itemOpen, itemSaveas, IupSeparator(), submenuRecent, itemExit, NULL);
 	auto editMenu = IupMenu(itemFind, itemGoto, NULL);
 	auto formatMenu = IupMenu(itemFont, NULL);
 	auto helpMenu = IupMenu(itemAbout, NULL);
@@ -473,6 +502,9 @@ int main(int argc, char* argv[])
 	IupSetAttributeHandle(dlg, Attr::MENU, menu);
 	IupSetAttribute(dlg, Attr::TITLE, "Simple Notepad");
 	IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
+	IupSetCallback(dlg, Attr::CLOSE_CB, Callbacks::itemExitActionCb);
+
+	IupSetAttribute(dlg, Attr::CONFIG, (char*)config);
 
 	/* parent for pre-defined dialogs in closed functions (IupMessage) */
 	IupSetAttributeHandle(nullptr, Attr::PARENTDIALOG, dlg);
@@ -482,7 +514,11 @@ int main(int argc, char* argv[])
 	IupSetCallback(dlg, "K_cF", Callbacks::itemFindActionCb);
 	IupSetCallback(dlg, "K_cG", Callbacks::itemGotoActionCb);
 
-	IupShowXY(dlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
+	IupConfigRecentInit(config, recentMenu, Callbacks::configRecentCb, 10);
+
+	IupConfigDialogShow(config, dlg, Group::MAIN_WINDOW);
+
+	// IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
 	IupSetAttribute(dlg, Attr::USERSIZE, nullptr);
 
 	IupMainLoop();
