@@ -399,13 +399,13 @@ int main(int argc, char* argv[])
 	IupSetAttribute(lblStatusbar, Attr::EXPAND, Val::HORIZONTAL);
 	IupSetAttribute(lblStatusbar, Attr::PADDING, P_10_X_5);
 
-	auto itemOpen = IupItem("Open...", nullptr);
-	auto itemSaveas = IupItem("Save as...", nullptr);
-	auto itemExit = IupItem("Exit", nullptr);
-	auto itemFind = IupItem("Find...", nullptr);
-	auto itemGoto = IupItem("Go To...", nullptr);
-	auto itemFont = IupItem("Font...", nullptr);
-	auto itemAbout = IupItem("About...", nullptr);
+	auto itemOpen = IupItem("&Open...\tCtrl+O", nullptr);
+	auto itemSaveas = IupItem("Save &As...\tCtrl+S", nullptr);
+	auto itemExit = IupItem("E&xit", nullptr);
+	auto itemFind = IupItem("&Find...\tCtrl+F", nullptr);
+	auto itemGoto = IupItem("&Go To...\tCtrl+G", nullptr);
+	auto itemFont = IupItem("&Font...", nullptr);
+	auto itemAbout = IupItem("&About...", nullptr);
 
 	auto btnOpen = IupFlatButton(nullptr);
 	IupSetAttribute(btnOpen, Attr::IMAGE, IUP::IUP_FILE_OPEN);
@@ -446,10 +446,10 @@ int main(int argc, char* argv[])
 	auto formatMenu = IupMenu(itemFont, NULL);
 	auto helpMenu = IupMenu(itemAbout, NULL);
 
-	auto submenuFile = IupSubmenu("File", fileMenu);
-	auto submenuEdit = IupSubmenu("Edit", editMenu);
-	auto submenuFormat = IupSubmenu("Format", formatMenu);
-	auto submenuHelp = IupSubmenu("Help", helpMenu);
+	auto submenuFile = IupSubmenu("&File", fileMenu);
+	auto submenuEdit = IupSubmenu("&Edit", editMenu);
+	auto submenuFormat = IupSubmenu("F&ormat", formatMenu);
+	auto submenuHelp = IupSubmenu("&Help", helpMenu);
 
 	auto menu = IupMenu(submenuFile, submenuEdit, submenuFormat, submenuHelp, NULL);
 
@@ -462,6 +462,11 @@ int main(int argc, char* argv[])
 
 	/* parent for pre-defined dialogs in closed functions (IupMessage) */
 	IupSetAttributeHandle(nullptr, Attr::PARENTDIALOG, dlg);
+
+	IupSetCallback(dlg, "K_cO", Callbacks::itemOpenActionCb);
+	IupSetCallback(dlg, "K_cS", Callbacks::itemSaveasActionCb);
+	IupSetCallback(dlg, "K_cF", Callbacks::itemFindActionCb);
+	IupSetCallback(dlg, "K_cG", Callbacks::itemGotoActionCb);
 
 	IupShowXY(dlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 	IupSetAttribute(dlg, Attr::USERSIZE, nullptr);
