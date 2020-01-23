@@ -26,7 +26,6 @@
 #include <cctype>
 #include <cstring>
 #include "Constants.h"
-#include <iostream>
 
 namespace Utils
 {
@@ -139,7 +138,6 @@ namespace Callbacks
 	int multitextCaretCb(Ihandle* multitext, int lin, int col, int)
 	{
 		auto lblStatusbar = IupGetDialogChild(multitext, Name::STATUSBAR);
-		std::cout << lblStatusbar << std::endl;
 		IupSetfAttribute(lblStatusbar, Attr::TITLE, "Lin %d, Col %d", lin, col);
 		return IUP_DEFAULT;
 	}
@@ -314,12 +312,9 @@ namespace Callbacks
 		if (!dlg)
 		{
 			auto multitext = IupGetDialogChild(itemFind, Name::MULTITEXT);
-			std::cout << Name::MULTITEXT << ":" << multitext << std::endl;
-			std::cout << Name::ITEM_FIND << ":" << itemFind << std::endl;
 
 			auto findTextField = IupText(nullptr);
 			IupSetAttribute(findTextField, Attr::NAME, Name::FIND_TEXT);
-			std::cout << Name::FIND_TEXT << ":" << findTextField << std::endl;
 			IupSetAttribute(findTextField, Attr::VISIBLECOLUMNS, _20);
 
 			auto findCase = IupToggle(CASE_SENSITIVE, nullptr);
