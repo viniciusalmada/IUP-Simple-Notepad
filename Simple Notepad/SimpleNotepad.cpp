@@ -136,6 +136,13 @@ namespace Utils
 
 namespace Callbacks
 {
+	int multitextCaretCb(Ihandle* multitext, int lin, int col)
+	{
+		auto lblStatusbar = IupGetDialogChild(multitext, Name::STATUSBAR);
+		IupSetfAttribute(lblStatusbar, Attr::TITLE, "Lin %d, Col %d", lin, col);
+		return IUP_DEFAULT;
+	}
+	
 	int itemOpenActionCb(Ihandle* itemOpen)
 	{
 		auto multitext = IupGetDialogChild(itemOpen, Name::MULTITEXT);

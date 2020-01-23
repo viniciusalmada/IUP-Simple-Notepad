@@ -51,6 +51,7 @@ namespace Name
 	const auto FIND_CASE = "FIND_CASE";
 	const auto FIND_DIALOG = "FIND_DIALOG";
 	const auto ITEM_FIND = "ITEM_FIND";
+	const auto STATUSBAR = "STATUSBAR";
 }
 
 const auto ERROR = "Error";
