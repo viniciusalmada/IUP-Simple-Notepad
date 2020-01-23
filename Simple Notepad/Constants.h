@@ -36,6 +36,10 @@ namespace Attr
 	const auto CARET_CB = "CARET_CB";
 	const auto FLAT_ACTION = "FLAT_ACTION";
 	const auto TIP = "TIP";
+	const auto RECENTFILENAME = "RECENTFILENAME";
+	const auto APP_NAME = "APP_NAME";
+	const auto CLOSE_CB = "CLOSE_CB";
+	const auto CONFIG = "CONFIG";
 }
 
 namespace Val
@@ -66,6 +70,16 @@ namespace IUP
 	const auto IUP_FILE_OPEN = "IUP_FileOpen";
 	const auto IUP_FILE_SAVE = "IUP_FileSave";
 	const auto IUP_EDIT_FIND = "IUP_EditFind";
+}
+
+namespace Group
+{
+	const auto MAIN_WINDOW = "MainWindow";
+}
+
+namespace Key
+{
+	const auto FONT = "Font";
 }
 
 const auto ERROR = "Error";
