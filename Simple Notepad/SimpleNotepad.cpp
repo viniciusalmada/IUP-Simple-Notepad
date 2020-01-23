@@ -410,19 +410,19 @@ int main(int argc, char* argv[])
 	auto btnOpen = IupFlatButton(nullptr);
 	IupSetAttribute(btnOpen, Attr::IMAGE, IUP::IUP_FILE_OPEN);
 	IupSetAttribute(btnOpen, Attr::CANFOCUS, Val::N);
-	IupSetAttribute(btnOpen, Attr::TIP, "Open");
+	IupSetAttribute(btnOpen, Attr::TIP, "Open (Ctrl+O)");
 	IupSetAttribute(btnOpen, Attr::PADDING, M_5_X_5);
 
 	auto btnSave = IupFlatButton(nullptr);
 	IupSetAttribute(btnSave, Attr::IMAGE, IUP::IUP_FILE_SAVE);
 	IupSetAttribute(btnSave, Attr::CANFOCUS, Val::N);
-	IupSetAttribute(btnSave, Attr::TIP, "Save");
+	IupSetAttribute(btnSave, Attr::TIP, "Save (Ctrl+S)");
 	IupSetAttribute(btnSave, Attr::PADDING, M_5_X_5);
 
 	auto btnFind = IupFlatButton(nullptr);
 	IupSetAttribute(btnFind, Attr::IMAGE, IUP::IUP_EDIT_FIND);
 	IupSetAttribute(btnFind, Attr::CANFOCUS, Val::N);
-	IupSetAttribute(btnFind, Attr::TIP, "Find");
+	IupSetAttribute(btnFind, Attr::TIP, "Find (Ctrl+F)");
 	IupSetAttribute(btnFind, Attr::PADDING, M_5_X_5);
 
 	auto sepVertical = IupSetAttributes(IupLabel(nullptr), "SEPARATOR=VERTICAL");
