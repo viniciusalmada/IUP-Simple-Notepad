@@ -35,6 +35,7 @@ namespace Attr
 	const auto CANFOCUS = "CANFOCUS";
 	const auto CARET_CB = "CARET_CB";
 	const auto FLAT_ACTION = "FLAT_ACTION";
+	const auto TIP = "TIP";
 }
 
 namespace Val
