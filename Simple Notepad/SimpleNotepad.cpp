@@ -21,10 +21,11 @@
 // ReSharper disable CppParameterMayBeConst
 // ReSharper disable CppClangTidyClangDiagnosticDeprecatedDeclarations
 #include <cstdlib>
-#include "iup.h"
 #include <cstdio>
 #include <cctype>
 #include <cstring>
+
+#include "iup.h"
 #include "Constants.h"
 
 namespace Utils
@@ -135,6 +136,19 @@ namespace Utils
 
 namespace Callbacks
 {
+	int configRecentCb(Ihandle* self)
+	{
+		auto filename = IupGetAttribute(self, Attr::RECENTFILENAME);
+		auto str = Utils::readFile(filename);
+		if (str)
+		{
+			auto multitext = IupGetDialogChild(self, Name::MULTITEXT);
+			IupSetStrAttribute(multitext, Attr::VALUE, str);
+			delete str;
+		}
+		return IUP_DEFAULT;
+	}
+	
 	int multitextCaretCb(Ihandle* multitext, int lin, int col, int)
 	{
 		auto lblStatusbar = IupGetDialogChild(multitext, Name::STATUSBAR);
