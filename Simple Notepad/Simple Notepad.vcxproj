@@ -110,11 +110,12 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>T:\lib\mgeo\iup\lib\dll12_64\iup.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>T:\lib\mgeo\iup\lib\dll12_64\iup.lib;T:\lib\mgeo\iup\lib\dll12_64\iupimglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy "T:\lib\mgeo\iup\lib\dll12_64\iup.dll" "$(OutDir)\iup.dll"</Command>
+      <Command>copy "T:\lib\mgeo\iup\lib\dll12_64\iup.dll" "$(OutDir)\iup.dll"
+copy "T:\lib\mgeo\iup\lib\dll12_64\iupimglib.dll" "$(OutDir)\iupimglib.dll";</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -123,11 +124,12 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>T:\lib\mgeo\iup\lib\dll12_64\iup.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>T:\lib\mgeo\iup\lib\dll12_64\iup.lib;T:\lib\mgeo\iup\lib\dll12_64\iupimglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy "T:\lib\mgeo\iup\lib\dll12_64\iup.dll" "$(OutDir)\iup.dll"</Command>
+      <Command>copy "T:\lib\mgeo\iup\lib\dll12_64\iup.dll" "$(OutDir)\iup.dll"
+copy "T:\lib\mgeo\iup\lib\dll12_64\iupimglib.dll" "$(OutDir)\iupimglib.dll";</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

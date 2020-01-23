@@ -136,13 +136,14 @@ namespace Utils
 
 namespace Callbacks
 {
-	int multitextCaretCb(Ihandle* multitext, int lin, int col)
+	int multitextCaretCb(Ihandle* multitext, int lin, int col, int)
 	{
 		auto lblStatusbar = IupGetDialogChild(multitext, Name::STATUSBAR);
+		std::cout << lblStatusbar << std::endl;
 		IupSetfAttribute(lblStatusbar, Attr::TITLE, "Lin %d, Col %d", lin, col);
 		return IUP_DEFAULT;
 	}
-	
+
 	int itemOpenActionCb(Ihandle* itemOpen)
 	{
 		auto multitext = IupGetDialogChild(itemOpen, Name::MULTITEXT);
@@ -334,7 +335,7 @@ namespace Callbacks
 
 			auto btHbox = IupHbox(IupFill(), btNext, btClose, NULL);
 			auto box = IupVbox(IupLabel(FIND_WHAT_TITLE), findTextField, findCase,
-				IupSetAttributes(btHbox, Attr::NORMAL_HOR), NULL);
+								IupSetAttributes(btHbox, Attr::NORMAL_HOR), NULL);
 			IupSetAttribute(box, Attr::MARGIN, M_10_X_10);
 			IupSetAttribute(box, Attr::GAP, _5);
 
@@ -375,13 +376,13 @@ namespace Callbacks
 		return IUP_DEFAULT;
 	}
 
-	int itemAboutActionCb(Ihandle* ignored)
+	int itemAboutActionCb(Ihandle*)
 	{
 		IupMessage("About", "Simple Notepad\nAuthor:\nVinicius Almada");
 		return IUP_DEFAULT;
 	}
 
-	int itemExitActionCb(Ihandle* ignored)
+	int itemExitActionCb(Ihandle*)
 	{
 		return IUP_CLOSE;
 	}
@@ -390,32 +391,62 @@ namespace Callbacks
 int main(int argc, char* argv[])
 {
 	IupOpen(&argc, &argv);
+	IupImageLibOpen();
 
 	auto multiTextField = IupText(nullptr);
 	IupSetAttribute(multiTextField, Attr::MULTILINE, Val::Y);
 	IupSetAttribute(multiTextField, Attr::EXPAND, Val::Y);
 	IupSetAttribute(multiTextField, Attr::NAME, Name::MULTITEXT);
+	IupSetCallback(multiTextField, Attr::CARET_CB, (Icallback)Callbacks::multitextCaretCb);
 
-	auto item_open = IupItem("Open...", nullptr);
-	auto item_saveas = IupItem("Save as...", nullptr);
-	auto item_exit = IupItem("Exit", nullptr);
-	auto item_find = IupItem("Find...", nullptr);
-	auto item_goto = IupItem("Go To...", nullptr);
-	auto item_font = IupItem("Font...", nullptr);
-	auto item_about = IupItem("About...", nullptr);
+	auto lblStatusbar = IupLabel("Lin 1, Col 1");
+	IupSetAttribute(lblStatusbar, Attr::NAME, Name::STATUSBAR);
+	IupSetAttribute(lblStatusbar, Attr::EXPAND, Val::HORIZONTAL);
+	IupSetAttribute(lblStatusbar, Attr::PADDING, P_10_X_5);
 
-	IupSetCallback(item_open, Attr::ACTION, Callbacks::itemOpenActionCb);
-	IupSetCallback(item_saveas, Attr::ACTION, Callbacks::itemSaveasActionCb);
-	IupSetCallback(item_exit, Attr::ACTION, Callbacks::itemExitActionCb);
-	IupSetCallback(item_find, Attr::ACTION, Callbacks::itemFindActionCb);
-	IupSetCallback(item_goto, Attr::ACTION, Callbacks::itemGotoActionCb);
-	IupSetCallback(item_font, Attr::ACTION, Callbacks::itemFontActionCb);
-	IupSetCallback(item_about, Attr::ACTION, Callbacks::itemAboutActionCb);
+	auto itemOpen = IupItem("Open...", nullptr);
+	auto itemSaveas = IupItem("Save as...", nullptr);
+	auto itemExit = IupItem("Exit", nullptr);
+	auto itemFind = IupItem("Find...", nullptr);
+	auto itemGoto = IupItem("Go To...", nullptr);
+	auto itemFont = IupItem("Font...", nullptr);
+	auto itemAbout = IupItem("About...", nullptr);
 
-	auto fileMenu = IupMenu(item_open, item_saveas, IupSeparator(), item_exit, NULL);
-	auto editMenu = IupMenu(item_find, item_goto, NULL);
-	auto formatMenu = IupMenu(item_font, NULL);
-	auto helpMenu = IupMenu(item_about, NULL);
+	auto btnOpen = IupFlatButton(nullptr);
+	IupSetAttribute(btnOpen, Attr::IMAGE, IUP::IUP_FILE_OPEN);
+	IupSetAttribute(btnOpen, Attr::CANFOCUS, Val::N);
+	IupSetAttribute(btnOpen, Attr::PADDING, M_5_X_5);
+
+	auto btnSave = IupFlatButton(nullptr);
+	IupSetAttribute(btnSave, Attr::IMAGE, IUP::IUP_FILE_SAVE);
+	IupSetAttribute(btnSave, Attr::CANFOCUS, Val::N);
+	IupSetAttribute(btnSave, Attr::PADDING, M_5_X_5);
+
+	auto btnFind = IupFlatButton(nullptr);
+	IupSetAttribute(btnFind, Attr::IMAGE, IUP::IUP_EDIT_FIND);
+	IupSetAttribute(btnFind, Attr::CANFOCUS, Val::N);
+	IupSetAttribute(btnFind, Attr::PADDING, M_5_X_5);
+
+	auto sepVertical = IupSetAttributes(IupLabel(nullptr), "SEPARATOR=VERTICAL");
+	auto toolbar = IupHbox(btnOpen, btnSave, sepVertical, btnFind, NULL);
+	IupSetAttribute(toolbar, Attr::MARGIN, M_5_X_5);
+	IupSetAttribute(toolbar, Attr::GAP, "2");
+
+	IupSetCallback(itemOpen, Attr::ACTION, Callbacks::itemOpenActionCb);
+	IupSetCallback(btnOpen, Attr::FLAT_ACTION, Callbacks::itemOpenActionCb);
+	IupSetCallback(itemSaveas, Attr::ACTION, Callbacks::itemSaveasActionCb);
+	IupSetCallback(btnSave, Attr::FLAT_ACTION, Callbacks::itemSaveasActionCb);
+	IupSetCallback(itemExit, Attr::ACTION, Callbacks::itemExitActionCb);
+	IupSetCallback(itemFind, Attr::ACTION, Callbacks::itemFindActionCb);
+	IupSetCallback(btnFind, Attr::FLAT_ACTION, Callbacks::itemFindActionCb);
+	IupSetCallback(itemGoto, Attr::ACTION, Callbacks::itemGotoActionCb);
+	IupSetCallback(itemFont, Attr::ACTION, Callbacks::itemFontActionCb);
+	IupSetCallback(itemAbout, Attr::ACTION, Callbacks::itemAboutActionCb);
+
+	auto fileMenu = IupMenu(itemOpen, itemSaveas, IupSeparator(), itemExit, NULL);
+	auto editMenu = IupMenu(itemFind, itemGoto, NULL);
+	auto formatMenu = IupMenu(itemFont, NULL);
+	auto helpMenu = IupMenu(itemAbout, NULL);
 
 	auto submenuFile = IupSubmenu("File", fileMenu);
 	auto submenuEdit = IupSubmenu("Edit", editMenu);
@@ -424,13 +455,13 @@ int main(int argc, char* argv[])
 
 	auto menu = IupMenu(submenuFile, submenuEdit, submenuFormat, submenuHelp, NULL);
 
-	auto vbox = IupVbox(multiTextField, NULL);
+	auto vbox = IupVbox(toolbar, multiTextField, lblStatusbar, NULL);
 
 	auto dlg = IupDialog(vbox);
 	IupSetAttributeHandle(dlg, Attr::MENU, menu);
 	IupSetAttribute(dlg, Attr::TITLE, "Simple Notepad");
 	IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
-	
+
 	/* parent for pre-defined dialogs in closed functions (IupMessage) */
 	IupSetAttributeHandle(nullptr, Attr::PARENTDIALOG, dlg);
 
