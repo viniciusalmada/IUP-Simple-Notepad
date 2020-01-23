@@ -14,6 +14,15 @@
  *
  * Version 1.5
  * -Added a toolbar and a statusbar
+ *
+ * Version 1.6
+ * -Defined hotkeys to menu options
+ *
+ * Version 1.7
+ * -Recent files and configuration file added
+ *
+ * Version 1.8
+ * -Clipboard actions support
  */
 // ReSharper disable CppLocalVariableMayBeConst
 // ReSharper disable CppCStyleCast
@@ -139,6 +148,37 @@ namespace Utils
 
 namespace Callbacks
 {
+	int editMenuOpenCb(Ihandle* open)
+	{
+		auto clipboard = IupClipboard();
+		auto itemPaste = IupGetDialogChild(open, Name::ITEM_PASTE);
+		auto itemCut = IupGetDialogChild(open, Name::ITEM_CUT);
+		auto itemDelete = IupGetDialogChild(open, Name::ITEM_DELETE);
+		auto itemCopy = IupGetDialogChild(open, Name::ITEM_COPY);
+		auto multitext = IupGetDialogChild(open, Name::MULTITEXT);
+
+		if (IupGetInt(clipboard, Attr::TEXTAVAILABLE))
+			IupSetAttribute(itemPaste, Attr::ACTIVE, Val::Y);
+		else
+			IupSetAttribute(itemPaste, Attr::ACTIVE, Val::N);
+
+		if (IupGetAttribute(multitext, Attr::SELECTEDTEXT))
+		{
+			IupSetAttribute(itemCopy, Attr::ACTIVE, Val::Y);
+			IupSetAttribute(itemCut, Attr::ACTIVE, Val::Y);
+			IupSetAttribute(itemDelete, Attr::ACTIVE, Val::Y);
+		} else
+		{
+			IupSetAttribute(itemCopy, Attr::ACTIVE, Val::N);
+			IupSetAttribute(itemCut, Attr::ACTIVE, Val::N);
+			IupSetAttribute(itemDelete, Attr::ACTIVE, Val::N);
+		}
+
+		IupDestroy(clipboard);
+
+		return IUP_DEFAULT;
+	}
+
 	int configRecentCb(Ihandle* self)
 	{
 		auto filename = IupGetAttribute(self, Attr::RECENTFILENAME);
