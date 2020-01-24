@@ -205,6 +205,41 @@ namespace Utils
 		if (writeFile(filename, str, count))
 			IupSetAttribute(multitext, Attr::DIRTY, Val::N);
 	}
+
+	void saveasFile(Ihandle* multitext, const char* filename)
+	{
+		auto str = IupGetAttribute(multitext, Attr::VALUE);
+		auto count = IupGetInt(multitext, Attr::COUNT);
+		if (writeFile(filename, str, count))
+		{
+			auto config = (Ihandle*)IupGetAttribute(multitext, Attr::CONFIG);
+
+			IupSetfAttribute(IupGetDialog(multitext), "TITLE", "%s - Simple Notepad", strFileTitle(filename));
+			IupSetStrAttribute(multitext, Attr::FILENAME, filename);
+			IupSetAttribute(multitext, Attr::DIRTY, Val::N);
+			IupConfigRecentUpdate(config, filename);
+		}
+	}
+
+	int saveCheck(Ihandle* ih)
+	{
+		auto multitext = IupGetDialogChild(ih, Name::MULTITEXT);
+		if (IupGetInt(multitext, Attr::DIRTY))
+		{
+			switch (IupAlarm("Warning", "File not saved! Save it now?", "Yes", "No", "Cancel"))
+			{
+			case 1:  /* save the changes and continue */
+				saveFile(multitext);
+				break;
+			case 2:  /* ignore the changes and continue */
+				break;
+			case 3:  /* cancel */
+				return 0;
+			default: ;
+			}
+		}
+		return 1;
+	}
 }
 
 namespace Callbacks
