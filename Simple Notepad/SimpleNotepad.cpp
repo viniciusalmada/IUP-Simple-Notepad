@@ -585,7 +585,7 @@ int main(int argc, char* argv[])
 	auto submenuRecent = IupSubmenu("Recent &Files", recentMenu);
 
 	auto fileMenu = IupMenu(itemOpen, itemSaveas, IupSeparator(), submenuRecent, itemExit, NULL);
-	auto editMenu = IupMenu(itemFind, itemGoto, NULL);
+	auto editMenu = IupMenu(itemCut,itemCopy,itemPaste,itemDelete,IupSeparator(),itemFind, itemGoto,IupSeparator(),itemSelectAll, NULL);
 	auto formatMenu = IupMenu(itemFont, NULL);
 	auto helpMenu = IupMenu(itemAbout, NULL);
 
@@ -603,8 +603,9 @@ int main(int argc, char* argv[])
 	IupSetAttribute(dlg, Attr::TITLE, "Simple Notepad");
 	IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
 	IupSetCallback(dlg, Attr::CLOSE_CB, Callbacks::itemExitActionCb);
-
 	IupSetAttribute(dlg, Attr::CONFIG, (char*)config);
+
+	IupSetCallback(editMenu, Attr::OPEN_CB, Callbacks::editMenuOpenCb);
 
 	/* parent for pre-defined dialogs in closed functions (IupMessage) */
 	IupSetAttributeHandle(nullptr, Attr::PARENTDIALOG, dlg);

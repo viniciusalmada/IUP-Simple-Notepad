@@ -46,6 +46,7 @@ namespace Attr
 	const auto TEXT = "TEXT";
 	const auto INSERT = "INSERT";
 	const auto SELECTION = "SELECTION";
+	const auto OPEN_CB = "OPEN_CB";
 }
 
 namespace Val
