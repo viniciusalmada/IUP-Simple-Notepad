@@ -175,7 +175,7 @@ namespace Utils
 
 		IupSetAttribute(dlg, Attr::TITLE, DEFAULT_TITLE);
 		IupSetAttribute(multitext, Attr::FILENAME, nullptr);
-		IupSetAttribute(multitext, Attr::DIRTY, Val::N);
+		IupSetAttribute(multitext, Attr::DIRTY, Val::NO);
 		IupSetAttribute(multitext, Attr::VALUE, "");
 	}
 
@@ -190,7 +190,7 @@ namespace Utils
 			auto config = (Ihandle*)IupGetAttribute(multitext, Attr::CONFIG);
 			IupSetfAttribute(dlg, Attr::TITLE, "%s - Simple Notepad", strFileTitle(filename));
 			IupSetStrAttribute(multitext, Attr::FILENAME, filename);
-			IupSetAttribute(multitext, Attr::DIRTY, Val::N);
+			IupSetAttribute(multitext, Attr::DIRTY, Val::NO);
 			IupSetStrAttribute(multitext, Attr::VALUE, str);
 			IupConfigRecentUpdate(config, filename);
 			delete str;
@@ -203,7 +203,7 @@ namespace Utils
 		auto str = IupGetAttribute(multitext, Attr::VALUE);
 		auto count = IupGetInt(multitext, Attr::COUNT);
 		if (writeFile(filename, str, count))
-			IupSetAttribute(multitext, Attr::DIRTY, Val::N);
+			IupSetAttribute(multitext, Attr::DIRTY, Val::NO);
 	}
 
 	void saveasFile(Ihandle* multitext, const char* filename)
@@ -216,7 +216,7 @@ namespace Utils
 
 			IupSetfAttribute(IupGetDialog(multitext), "TITLE", "%s - Simple Notepad", strFileTitle(filename));
 			IupSetStrAttribute(multitext, Attr::FILENAME, filename);
-			IupSetAttribute(multitext, Attr::DIRTY, Val::N);
+			IupSetAttribute(multitext, Attr::DIRTY, Val::NO);
 			IupConfigRecentUpdate(config, filename);
 		}
 	}
@@ -253,7 +253,7 @@ namespace Callbacks
 
 	int multitextValueChangedCb(Ihandle* multitext)
 	{
-		IupSetAttribute(multitext, Attr::DIRTY, Val::Y);
+		IupSetAttribute(multitext, Attr::DIRTY, Val::YES);
 		return IUP_DEFAULT;
 	}
 
@@ -265,14 +265,14 @@ namespace Callbacks
 		auto filename = IupGetAttribute(multitext, Attr::FILENAME);
 		auto dirty = IupGetInt(multitext, Attr::DIRTY);
 		if (dirty)
-			IupSetAttribute(itemSave, Attr::ACTIVE, Val::Y);
+			IupSetAttribute(itemSave, Attr::ACTIVE, Val::YES);
 		else
-			IupSetAttribute(itemSave, Attr::ACTIVE, Val::N);
+			IupSetAttribute(itemSave, Attr::ACTIVE, Val::NO);
 
 		if (dirty && filename)
-			IupSetAttribute(itemRevert, Attr::ACTIVE, Val::Y);
+			IupSetAttribute(itemRevert, Attr::ACTIVE, Val::YES);
 		else
-			IupSetAttribute(itemRevert, Attr::ACTIVE, Val::N);
+			IupSetAttribute(itemRevert, Attr::ACTIVE, Val::NO);
 
 		return IUP_DEFAULT;
 	}
@@ -330,21 +330,21 @@ namespace Callbacks
 		auto multitext = IupGetDialogChild(open, Name::MULTITEXT);
 
 		if (IupGetInt(clipboard, Attr::TEXTAVAILABLE))
-			IupSetAttribute(itemPaste, Attr::ACTIVE, Val::Y);
+			IupSetAttribute(itemPaste, Attr::ACTIVE, Val::YES);
 		else
-			IupSetAttribute(itemPaste, Attr::ACTIVE, Val::N);
+			IupSetAttribute(itemPaste, Attr::ACTIVE, Val::NO);
 
 		if (IupGetAttribute(multitext, Attr::SELECTEDTEXT))
 		{
-			IupSetAttribute(itemCopy, Attr::ACTIVE, Val::Y);
-			IupSetAttribute(itemCut, Attr::ACTIVE, Val::Y);
-			IupSetAttribute(itemDelete, Attr::ACTIVE, Val::Y);
+			IupSetAttribute(itemCopy, Attr::ACTIVE, Val::YES);
+			IupSetAttribute(itemCut, Attr::ACTIVE, Val::YES);
+			IupSetAttribute(itemDelete, Attr::ACTIVE, Val::YES);
 		}
 		else
 		{
-			IupSetAttribute(itemCopy, Attr::ACTIVE, Val::N);
-			IupSetAttribute(itemCut, Attr::ACTIVE, Val::N);
-			IupSetAttribute(itemDelete, Attr::ACTIVE, Val::N);
+			IupSetAttribute(itemCopy, Attr::ACTIVE, Val::NO);
+			IupSetAttribute(itemCut, Attr::ACTIVE, Val::NO);
+			IupSetAttribute(itemDelete, Attr::ACTIVE, Val::NO);
 		}
 
 		/* Each IupClipboard should be destroyed using IupDestroy */
@@ -382,7 +382,7 @@ namespace Callbacks
 	{
 		if (!Utils::saveCheck(itemOpen))
 			return IUP_DEFAULT;
-		
+
 		auto filedlg = IupFileDlg();
 		IupSetAttribute(filedlg, Attr::DIALOGTYPE, Val::OPEN);
 		IupSetAttribute(filedlg, Attr::EXTFILTER, Val::TXT_FILES);
@@ -431,7 +431,7 @@ namespace Callbacks
 			Utils::saveFile(multitext);
 		return IUP_DEFAULT;
 	}
-	
+
 	int itemRevertActionCb(Ihandle* itemRevert)
 	{
 		auto multitext = IupGetDialogChild(itemRevert, Name::MULTITEXT);
@@ -490,7 +490,7 @@ namespace Callbacks
 
 		auto dlg = IupDialog(box);
 		IupSetAttribute(dlg, Attr::TITLE, GO_TO);
-		IupSetAttribute(dlg, Attr::DIALOGFRAME, Val::Y);
+		IupSetAttribute(dlg, Attr::DIALOGFRAME, Val::YES);
 		IupSetAttributeHandle(dlg, Attr::DEFAULTENTER, btOk);
 		IupSetAttributeHandle(dlg, Attr::DEFAULTESC, btCancel);
 		IupSetAttributeHandle(dlg, Attr::PARENTDIALOG, IupGetDialog(itemGoto));
@@ -587,7 +587,7 @@ namespace Callbacks
 
 			dlg = IupDialog(box);
 			IupSetAttribute(dlg, Attr::TITLE, FIND_TITLE);
-			IupSetAttribute(dlg, Attr::DIALOGFRAME, Val::Y);
+			IupSetAttribute(dlg, Attr::DIALOGFRAME, Val::YES);
 			IupSetAttributeHandle(dlg, Attr::DEFAULTENTER, btNext);
 			IupSetAttributeHandle(dlg, Attr::DEFAULTESC, btClose);
 			IupSetAttributeHandle(dlg, Attr::PARENTDIALOG, IupGetDialog(itemFind));
@@ -636,9 +636,9 @@ namespace Callbacks
 		auto dlg = IupGetDialog(itemExit);
 		auto config = (Ihandle*)IupGetAttribute(dlg, Attr::CONFIG);
 
-		if(!Utils::saveCheck(itemExit))
-			return IUP_IGNORE;  /* to abort the CLOSE_CB callback */
-		
+		if (!Utils::saveCheck(itemExit))
+			return IUP_IGNORE; /* to abort the CLOSE_CB callback */
+
 		IupConfigDialogClosed(config, dlg, Group::MAIN_WINDOW);
 		IupConfigSave(config);
 		IupDestroy(config);
@@ -656,10 +656,13 @@ int main(int argc, char* argv[])
 	IupConfigLoad(config);
 
 	auto multiTextField = IupText(nullptr);
-	IupSetAttribute(multiTextField, Attr::MULTILINE, Val::Y);
-	IupSetAttribute(multiTextField, Attr::EXPAND, Val::Y);
+	IupSetAttribute(multiTextField, Attr::MULTILINE, Val::YES);
+	IupSetAttribute(multiTextField, Attr::EXPAND, Val::YES);
 	IupSetAttribute(multiTextField, Attr::NAME, Name::MULTITEXT);
+	IupSetAttribute(multiTextField, Attr::DIRTY, Val::NO);
 	IupSetCallback(multiTextField, Attr::CARET_CB, (Icallback)Callbacks::multitextCaretCb);
+	IupSetCallback(multiTextField, Attr::VALUECHANGED_CB, (Icallback)Callbacks::multitextValueChangedCb);
+	IupSetCallback(multiTextField, Attr::DROPFILES_CB, (Icallback)Callbacks::dropFilesCb);
 
 	auto font = IupConfigGetVariableStr(config, Group::MAIN_WINDOW, Key::FONT);
 	if (font) IupSetStrAttribute(multiTextField, Attr::FONT, font);
@@ -669,16 +672,36 @@ int main(int argc, char* argv[])
 	IupSetAttribute(lblStatusbar, Attr::EXPAND, Val::HORIZONTAL);
 	IupSetAttribute(lblStatusbar, Attr::PADDING, P_10_X_5);
 
+	auto itemNew = IupItem("New\tCtrl+N", nullptr);
+	IupSetAttribute(itemNew, Attr::IMAGE, IUP::IUP_FILE_NEW);
+	IupSetCallback(itemNew, Attr::ACTION, Callbacks::itemNewActionCb);
+	auto buttonNew = IupFlatButton(nullptr);
+	IupSetAttribute(buttonNew, Attr::IMAGE, IUP::IUP_FILE_NEW);
+	IupSetCallback(buttonNew, Attr::FLAT_ACTION, Callbacks::itemNewActionCb);
+	IupSetAttribute(buttonNew, Attr::TIP, "New (Ctrl+N");
+	IupSetAttribute(buttonNew, Attr::CANFOCUS, Val::NO);
+	IupSetAttribute(buttonNew, Attr::PADDING, M_5_X_5);
+
 	auto itemOpen = IupItem("&Open...\tCtrl+O", nullptr);
-	auto itemSaveas = IupItem("Save &As...\tCtrl+S", nullptr);
+	IupSetAttribute(itemOpen, Attr::IMAGE, IUP::IUP_FILE_OPEN);
+	auto itemSave = IupItem("&Save\tCtrl+S", nullptr);
+	IupSetAttribute(itemSave, Attr::NAME, Name::ITEM_SAVE);
+	IupSetAttribute(itemSave, Attr::IMAGE, IUP::IUP_FILE_SAVE);
+	IupSetCallback(itemSave, Attr::ACTION, Callbacks::itemSaveActionCb);
+	auto itemSaveas = IupItem("Save &As...", nullptr);
+	IupSetAttribute(itemSaveas, Attr::NAME, Name::ITEM_SAVEAS);
+	auto itemRevert = IupItem("Revert", nullptr);
+	IupSetAttribute(itemRevert, Attr::NAME, Name::ITEM_REVERT);
+	IupSetCallback(itemRevert, Attr::ACTION, Callbacks::itemRevertActionCb);
 	auto itemExit = IupItem("E&xit", nullptr);
 	auto itemFind = IupItem("&Find...\tCtrl+F", nullptr);
+	IupSetAttribute(itemFind, Attr::IMAGE, IUP::IUP_EDIT_FIND);
 	auto itemGoto = IupItem("&Go To...\tCtrl+G", nullptr);
 	auto itemFont = IupItem("&Font...", nullptr);
 	auto itemAbout = IupItem("&About...", nullptr);
 
-	auto itemCopy = IupItem("Copy\tCtrl+C", nullptr);
 	auto itemCut = IupItem("Cut\tCtrl+X", nullptr);
+	auto itemCopy = IupItem("Copy\tCtrl+C", nullptr);
 	auto itemPaste = IupItem("Paste\tCtrl+V", nullptr);
 	auto itemDelete = IupItem("Delete\tDel", nullptr);
 	auto itemSelectAll = IupItem("Select All\tCtrl+A", nullptr);
@@ -688,33 +711,63 @@ int main(int argc, char* argv[])
 	IupSetAttribute(itemPaste, Attr::NAME, Name::ITEM_PASTE);
 	IupSetAttribute(itemDelete, Attr::NAME, Name::ITEM_DELETE);
 
+	IupSetAttribute(itemCopy, Attr::IMAGE, IUP::IUP_COPY);
+	IupSetAttribute(itemCut, Attr::IMAGE, IUP::IUP_CUT);
+	IupSetAttribute(itemPaste, Attr::IMAGE, IUP::IUP_PASTE);
+	IupSetAttribute(itemDelete, Attr::IMAGE, IUP::IUP_ERASE);
+
+	auto btnCut = IupFlatButton(nullptr);
+	IupSetAttribute(btnCut, Attr::IMAGE, IUP::IUP_CUT);
+	IupSetCallback(btnCut, Attr::FLAT_ACTION, Callbacks::itemCutActionCb);
+	IupSetAttribute(btnCut, Attr::TIP, "Cut (Ctrl+X)");
+	IupSetAttribute(btnCut, Attr::CANFOCUS, Val::NO);
+	IupSetAttribute(btnCut, Attr::PADDING, M_5_X_5);
+
+	auto btnCopy = IupFlatButton(nullptr);
+	IupSetAttribute(btnCopy, Attr::IMAGE, IUP::IUP_COPY);
+	IupSetCallback(btnCopy, Attr::FLAT_ACTION, Callbacks::itemCopyActionCb);
+	IupSetAttribute(btnCopy, Attr::TIP, "Copy (Ctrl+C)");
+	IupSetAttribute(btnCopy, Attr::CANFOCUS, Val::NO);
+	IupSetAttribute(btnCopy, Attr::PADDING, M_5_X_5);
+
+	auto btnPaste = IupFlatButton(nullptr);
+	IupSetAttribute(btnPaste, Attr::IMAGE, IUP::IUP_PASTE);
+	IupSetCallback(btnPaste, Attr::FLAT_ACTION, Callbacks::itemPasteActionCb);
+	IupSetAttribute(btnPaste, Attr::TIP, "Paste (Ctrl+V)");
+	IupSetAttribute(btnPaste, Attr::CANFOCUS, Val::NO);
+	IupSetAttribute(btnPaste, Attr::PADDING, M_5_X_5);
+
 	auto btnOpen = IupFlatButton(nullptr);
 	IupSetAttribute(btnOpen, Attr::IMAGE, IUP::IUP_FILE_OPEN);
-	IupSetAttribute(btnOpen, Attr::CANFOCUS, Val::N);
+	IupSetAttribute(btnOpen, Attr::CANFOCUS, Val::NO);
 	IupSetAttribute(btnOpen, Attr::TIP, "Open (Ctrl+O)");
 	IupSetAttribute(btnOpen, Attr::PADDING, M_5_X_5);
 
 	auto btnSave = IupFlatButton(nullptr);
 	IupSetAttribute(btnSave, Attr::IMAGE, IUP::IUP_FILE_SAVE);
-	IupSetAttribute(btnSave, Attr::CANFOCUS, Val::N);
+	IupSetAttribute(btnSave, Attr::CANFOCUS, Val::NO);
 	IupSetAttribute(btnSave, Attr::TIP, "Save (Ctrl+S)");
 	IupSetAttribute(btnSave, Attr::PADDING, M_5_X_5);
 
 	auto btnFind = IupFlatButton(nullptr);
 	IupSetAttribute(btnFind, Attr::IMAGE, IUP::IUP_EDIT_FIND);
-	IupSetAttribute(btnFind, Attr::CANFOCUS, Val::N);
+	IupSetAttribute(btnFind, Attr::CANFOCUS, Val::NO);
 	IupSetAttribute(btnFind, Attr::TIP, "Find (Ctrl+F)");
 	IupSetAttribute(btnFind, Attr::PADDING, M_5_X_5);
 
-	auto sepVertical = IupSetAttributes(IupLabel(nullptr), "SEPARATOR=VERTICAL");
-	auto toolbar = IupHbox(btnOpen, btnSave, sepVertical, btnFind, NULL);
+
+	auto toolbar = IupHbox(buttonNew, btnOpen, btnSave,
+							IupSetAttributes(IupLabel(nullptr), "SEPARATOR=VERTICAL"),
+							btnCut, btnCopy, btnPaste,
+							IupSetAttributes(IupLabel(nullptr), "SEPARATOR=VERTICAL"),
+							btnFind, NULL);
 	IupSetAttribute(toolbar, Attr::MARGIN, M_5_X_5);
 	IupSetAttribute(toolbar, Attr::GAP, "2");
 
 	IupSetCallback(itemOpen, Attr::ACTION, Callbacks::itemOpenActionCb);
 	IupSetCallback(btnOpen, Attr::FLAT_ACTION, Callbacks::itemOpenActionCb);
 	IupSetCallback(itemSaveas, Attr::ACTION, Callbacks::itemSaveasActionCb);
-	IupSetCallback(btnSave, Attr::FLAT_ACTION, Callbacks::itemSaveasActionCb);
+	IupSetCallback(btnSave, Attr::FLAT_ACTION, Callbacks::itemSaveActionCb);
 	IupSetCallback(itemExit, Attr::ACTION, Callbacks::itemExitActionCb);
 	IupSetCallback(itemFind, Attr::ACTION, Callbacks::itemFindActionCb);
 	IupSetCallback(btnFind, Attr::FLAT_ACTION, Callbacks::itemFindActionCb);
@@ -730,7 +783,8 @@ int main(int argc, char* argv[])
 	auto recentMenu = IupMenu(nullptr);
 	auto submenuRecent = IupSubmenu("Recent &Files", recentMenu);
 
-	auto fileMenu = IupMenu(itemOpen, itemSaveas, IupSeparator(), submenuRecent, itemExit, NULL);
+	auto fileMenu = IupMenu(itemNew, itemOpen, itemSave, itemSaveas, itemRevert, IupSeparator(), submenuRecent,
+							itemExit, NULL);
 	auto editMenu = IupMenu(itemCut, itemCopy, itemPaste, itemDelete, IupSeparator(), itemFind, itemGoto,
 							IupSeparator(), itemSelectAll, NULL);
 	auto formatMenu = IupMenu(itemFont, NULL);
@@ -741,6 +795,9 @@ int main(int argc, char* argv[])
 	auto submenuFormat = IupSubmenu("F&ormat", formatMenu);
 	auto submenuHelp = IupSubmenu("&Help", helpMenu);
 
+	IupSetCallback(fileMenu, Attr::OPEN_CB, Callbacks::fileMenuOpenCb);
+	IupSetCallback(editMenu, Attr::OPEN_CB, Callbacks::editMenuOpenCb);
+
 	auto menu = IupMenu(submenuFile, submenuEdit, submenuFormat, submenuHelp, NULL);
 
 	auto vbox = IupVbox(toolbar, multiTextField, lblStatusbar, NULL);
@@ -750,6 +807,7 @@ int main(int argc, char* argv[])
 	IupSetAttribute(dlg, Attr::TITLE, "Simple Notepad");
 	IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
 	IupSetCallback(dlg, Attr::CLOSE_CB, Callbacks::itemExitActionCb);
+	IupSetCallback(dlg, Attr::DROPFILES_CB, (Icallback)Callbacks::dropFilesCb);
 	IupSetAttribute(dlg, Attr::CONFIG, (char*)config);
 
 	IupSetCallback(editMenu, Attr::OPEN_CB, Callbacks::editMenuOpenCb);
@@ -757,14 +815,24 @@ int main(int argc, char* argv[])
 	/* parent for pre-defined dialogs in closed functions (IupMessage) */
 	IupSetAttributeHandle(nullptr, Attr::PARENTDIALOG, dlg);
 
+	IupSetCallback(dlg, "K_cN", Callbacks::itemNewActionCb);
 	IupSetCallback(dlg, "K_cO", Callbacks::itemOpenActionCb);
-	IupSetCallback(dlg, "K_cS", Callbacks::itemSaveasActionCb);
+	IupSetCallback(dlg, "K_cS", Callbacks::itemSaveActionCb);
 	IupSetCallback(dlg, "K_cF", Callbacks::itemFindActionCb);
 	IupSetCallback(dlg, "K_cG", Callbacks::itemGotoActionCb);
 
 	IupConfigRecentInit(config, recentMenu, Callbacks::configRecentCb, 10);
 
 	IupConfigDialogShow(config, dlg, Group::MAIN_WINDOW);
+
+	/* initialize the current file */
+	Utils::newFile(dlg);
+	/* open a file from the command line (allow file association in Windows) */
+	if (argc > 1 && argv[1])
+	{
+		const char* filename = argv[1];
+		Utils::openFile(dlg, filename);
+	}
 
 	// IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
 	IupSetAttribute(dlg, Attr::USERSIZE, nullptr);
