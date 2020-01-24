@@ -63,7 +63,7 @@ namespace Utils
 		}
 		return filename + offset;
 	}
-	
+
 	int stringCompare(const char* l, const char* r, int case_sensitive)
 	{
 		if (!l || !r) return 0;
@@ -178,6 +178,33 @@ namespace Utils
 		IupSetAttribute(multitext, Attr::DIRTY, Val::N);
 		IupSetAttribute(multitext, Attr::VALUE, "");
 	}
+
+	void openFile(Ihandle* self, const char* filename)
+	{
+		auto str = readFile(filename);
+		if (str)
+		{
+			auto dlg = IupGetDialog(self);
+			auto multitext = IupGetDialogChild(self, Name::MULTITEXT);
+
+			auto config = (Ihandle*)IupGetAttribute(multitext, Attr::CONFIG);
+			IupSetfAttribute(dlg, Attr::TITLE, "%s - Simple Notepad", strFileTitle(filename));
+			IupSetStrAttribute(multitext, Attr::FILENAME, filename);
+			IupSetAttribute(multitext, Attr::DIRTY, Val::N);
+			IupSetStrAttribute(multitext, Attr::VALUE, str);
+			IupConfigRecentUpdate(config, filename);
+			delete str;
+		}
+	}
+
+	void saveFile(Ihandle* multitext)
+	{
+		auto filename = IupGetAttribute(multitext, Attr::FILENAME);
+		auto str = IupGetAttribute(multitext, Attr::VALUE);
+		auto count = IupGetInt(multitext, Attr::COUNT);
+		if (writeFile(filename, str, count))
+			IupSetAttribute(multitext, Attr::DIRTY, Val::N);
+	}
 }
 
 namespace Callbacks
@@ -185,7 +212,7 @@ namespace Callbacks
 	int itemCopyActionCb(Ihandle* itemCopy)
 	{
 		Ihandle* multitext = IupGetDialogChild(itemCopy, Name::MULTITEXT);
-		Ihandle *clipboard = IupClipboard();
+		Ihandle* clipboard = IupClipboard();
 		IupSetAttribute(clipboard, Attr::TEXT, IupGetAttribute(multitext, Attr::SELECTEDTEXT));
 		IupDestroy(clipboard);
 		return IUP_DEFAULT;
@@ -194,7 +221,7 @@ namespace Callbacks
 	int itemPasteActionCb(Ihandle* itemPaste)
 	{
 		Ihandle* multitext = IupGetDialogChild(itemPaste, Name::MULTITEXT);
-		Ihandle *clipboard = IupClipboard();
+		Ihandle* clipboard = IupClipboard();
 		IupSetAttribute(multitext, Attr::INSERT, IupGetAttribute(clipboard, Attr::TEXT));
 		IupDestroy(clipboard);
 		return IUP_DEFAULT;
@@ -203,7 +230,7 @@ namespace Callbacks
 	int itemCutActionCb(Ihandle* itemCut)
 	{
 		Ihandle* multitext = IupGetDialogChild(itemCut, Name::MULTITEXT);
-		Ihandle *clipboard = IupClipboard();
+		Ihandle* clipboard = IupClipboard();
 		IupSetAttribute(clipboard, Attr::TEXT, IupGetAttribute(multitext, Attr::SELECTEDTEXT));
 		IupSetAttribute(multitext, Attr::SELECTEDTEXT, "");
 		IupDestroy(clipboard);
@@ -224,7 +251,7 @@ namespace Callbacks
 		IupSetAttribute(multitext, Attr::SELECTION, Val::ALL);
 		return IUP_DEFAULT;
 	}
-	
+
 	int editMenuOpenCb(Ihandle* open)
 	{
 		auto clipboard = IupClipboard();
@@ -244,7 +271,8 @@ namespace Callbacks
 			IupSetAttribute(itemCopy, Attr::ACTIVE, Val::Y);
 			IupSetAttribute(itemCut, Attr::ACTIVE, Val::Y);
 			IupSetAttribute(itemDelete, Attr::ACTIVE, Val::Y);
-		} else
+		}
+		else
 		{
 			IupSetAttribute(itemCopy, Attr::ACTIVE, Val::N);
 			IupSetAttribute(itemCut, Attr::ACTIVE, Val::N);
@@ -570,7 +598,7 @@ int main(int argc, char* argv[])
 	auto itemPaste = IupItem("Paste\tCtrl+V", nullptr);
 	auto itemDelete = IupItem("Delete\tDel", nullptr);
 	auto itemSelectAll = IupItem("Select All\tCtrl+A", nullptr);
-	
+
 	IupSetAttribute(itemCopy, Attr::NAME, Name::ITEM_COPY);
 	IupSetAttribute(itemCut, Attr::NAME, Name::ITEM_CUT);
 	IupSetAttribute(itemPaste, Attr::NAME, Name::ITEM_PASTE);
@@ -619,7 +647,8 @@ int main(int argc, char* argv[])
 	auto submenuRecent = IupSubmenu("Recent &Files", recentMenu);
 
 	auto fileMenu = IupMenu(itemOpen, itemSaveas, IupSeparator(), submenuRecent, itemExit, NULL);
-	auto editMenu = IupMenu(itemCut,itemCopy,itemPaste,itemDelete,IupSeparator(),itemFind, itemGoto,IupSeparator(),itemSelectAll, NULL);
+	auto editMenu = IupMenu(itemCut, itemCopy, itemPaste, itemDelete, IupSeparator(), itemFind, itemGoto,
+							IupSeparator(), itemSelectAll, NULL);
 	auto formatMenu = IupMenu(itemFont, NULL);
 	auto helpMenu = IupMenu(itemAbout, NULL);
 
