@@ -47,6 +47,11 @@ namespace Attr
 	const auto INSERT = "INSERT";
 	const auto SELECTION = "SELECTION";
 	const auto OPEN_CB = "OPEN_CB";
+	const auto FILENAME = "FILENAME";
+	const auto DIRTY = "DIRTY";
+	const auto FILE = "FILE";
+	const auto VALUECHANGED_CB = "VALUECHANGED_CB";
+	const auto DROPFILES_CB = "DROPFILES_CB";
 }
 
 namespace Val
@@ -56,9 +61,9 @@ namespace Val
 	const auto SAVE = "SAVE";
 	const auto ONE = "1";
 	const auto ZERO = "0";
-	const auto Y = "Yes";
+	const auto YES = "Yes";
 	const auto HORIZONTAL = "HORIZONTAL";
-	const auto N = "No";
+	const auto NO = "No";
 	const auto ALL = "ALL";
 }
 
@@ -75,6 +80,9 @@ namespace Name
 	const auto ITEM_CUT = "ITEM_CUT";
 	const auto ITEM_DELETE = "ITEM_DELETE";
 	const auto ITEM_COPY = "ITEM_COPY";
+	const auto ITEM_REVERT = "ITEM_REVERT";
+	const auto ITEM_SAVE = "ITEM_SAVE";
+	const auto ITEM_SAVEAS = "ITEM_SAVEAS";
 }
 
 namespace IUP
@@ -82,6 +90,11 @@ namespace IUP
 	const auto IUP_FILE_OPEN = "IUP_FileOpen";
 	const auto IUP_FILE_SAVE = "IUP_FileSave";
 	const auto IUP_EDIT_FIND = "IUP_EditFind";
+	const auto IUP_FILE_NEW = "IUP_FileNew";
+	const auto IUP_COPY = "IUP_EditCopy";
+	const auto IUP_CUT = "IUP_EditCut";
+	const auto IUP_PASTE = "IUP_EditPaste";
+	const auto IUP_ERASE = "IUP_EditErase";
 }
 
 namespace Group
@@ -114,3 +127,4 @@ const auto FIND_NEXT_TITLE = "Find Next";
 const auto FIND_TITLE = "Find";
 const auto CLOSE_TITLE = "Close";
 const auto FIND_WHAT_TITLE = "Find What:";
+const auto DEFAULT_TITLE = "Untitled - Simple Notepad";
