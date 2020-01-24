@@ -49,6 +49,7 @@ namespace Attr
 	const auto OPEN_CB = "OPEN_CB";
 	const auto FILENAME = "FILENAME";
 	const auto DIRTY = "DIRTY";
+	const auto FILE = "FILE";
 }
 
 namespace Val
@@ -77,6 +78,8 @@ namespace Name
 	const auto ITEM_CUT = "ITEM_CUT";
 	const auto ITEM_DELETE = "ITEM_DELETE";
 	const auto ITEM_COPY = "ITEM_COPY";
+	const auto ITEM_REVERT = "ITEM_REVERT";
+	const auto ITEM_SAVE = "ITEM_SAVE";
 }
 
 namespace IUP

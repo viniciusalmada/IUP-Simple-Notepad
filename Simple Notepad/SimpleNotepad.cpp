@@ -228,12 +228,12 @@ namespace Utils
 		{
 			switch (IupAlarm("Warning", "File not saved! Save it now?", "Yes", "No", "Cancel"))
 			{
-			case 1:  /* save the changes and continue */
+			case 1: /* save the changes and continue */
 				saveFile(multitext);
 				break;
-			case 2:  /* ignore the changes and continue */
+			case 2: /* ignore the changes and continue */
 				break;
-			case 3:  /* cancel */
+			case 3: /* cancel */
 				return 0;
 			default: ;
 			}
@@ -244,10 +244,43 @@ namespace Utils
 
 namespace Callbacks
 {
+	int dropFilesCb(Ihandle* ih, const char* filename)
+	{
+		if (Utils::saveCheck(ih))
+			Utils::openFile(ih, filename);
+		return IUP_DEFAULT;
+	}
+
+	int multitextValueChangedCb(Ihandle* multitext)
+	{
+		IupSetAttribute(multitext, Attr::DIRTY, Val::Y);
+		return IUP_DEFAULT;
+	}
+
+	int fileMenuOpenCb(Ihandle* ih)
+	{
+		auto itemRevert = IupGetDialogChild(ih, Name::ITEM_REVERT);
+		auto itemSave = IupGetDialogChild(ih, Name::ITEM_SAVE);
+		auto multitext = IupGetDialogChild(ih, Name::MULTITEXT);
+		auto filename = IupGetAttribute(multitext, Attr::FILENAME);
+		auto dirty = IupGetInt(multitext, Attr::DIRTY);
+		if (dirty)
+			IupSetAttribute(itemSave, Attr::ACTIVE, Val::Y);
+		else
+			IupSetAttribute(itemSave, Attr::ACTIVE, Val::N);
+
+		if (dirty && filename)
+			IupSetAttribute(itemRevert, Attr::ACTIVE, Val::Y);
+		else
+			IupSetAttribute(itemRevert, Attr::ACTIVE, Val::N);
+
+		return IUP_DEFAULT;
+	}
+
 	int itemCopyActionCb(Ihandle* itemCopy)
 	{
-		Ihandle* multitext = IupGetDialogChild(itemCopy, Name::MULTITEXT);
-		Ihandle* clipboard = IupClipboard();
+		auto multitext = IupGetDialogChild(itemCopy, Name::MULTITEXT);
+		auto clipboard = IupClipboard();
 		IupSetAttribute(clipboard, Attr::TEXT, IupGetAttribute(multitext, Attr::SELECTEDTEXT));
 		IupDestroy(clipboard);
 		return IUP_DEFAULT;
@@ -322,13 +355,10 @@ namespace Callbacks
 
 	int configRecentCb(Ihandle* self)
 	{
-		auto filename = IupGetAttribute(self, Attr::RECENTFILENAME);
-		auto str = Utils::readFile(filename);
-		if (str)
+		if (Utils::saveCheck(self))
 		{
-			auto multitext = IupGetDialogChild(self, Name::MULTITEXT);
-			IupSetStrAttribute(multitext, Attr::VALUE, str);
-			delete str;
+			auto filename = IupGetAttribute(self, Attr::RECENTFILENAME);
+			Utils::openFile(self, filename);
 		}
 		return IUP_DEFAULT;
 	}
@@ -340,9 +370,19 @@ namespace Callbacks
 		return IUP_DEFAULT;
 	}
 
+	int itemNewActionCb(Ihandle* itemNew)
+	{
+		if (Utils::saveCheck(itemNew))
+			Utils::newFile(itemNew);
+
+		return IUP_DEFAULT;
+	}
+
 	int itemOpenActionCb(Ihandle* itemOpen)
 	{
-		auto multitext = IupGetDialogChild(itemOpen, Name::MULTITEXT);
+		if (!Utils::saveCheck(itemOpen))
+			return IUP_DEFAULT;
+		
 		auto filedlg = IupFileDlg();
 		IupSetAttribute(filedlg, Attr::DIALOGTYPE, Val::OPEN);
 		IupSetAttribute(filedlg, Attr::EXTFILTER, Val::TXT_FILES);
@@ -353,15 +393,7 @@ namespace Callbacks
 		if (IupGetInt(filedlg, Attr::STATUS) != -1)
 		{
 			auto filename = IupGetAttribute(filedlg, Attr::VALUE);
-			auto str = Utils::readFile(filename);
-			if (str)
-			{
-				auto config = (Ihandle*)IupGetAttribute(multitext, Attr::CONFIG);
-				IupConfigRecentUpdate(config, filename);
-
-				IupSetStrAttribute(multitext, Attr::VALUE, str);
-				delete str;
-			}
+			Utils::openFile(itemOpen, filename);
 		}
 
 		IupDestroy(filedlg);
@@ -375,22 +407,36 @@ namespace Callbacks
 		IupSetAttribute(filedlg, Attr::DIALOGTYPE, Val::SAVE);
 		IupSetAttribute(filedlg, Attr::EXTFILTER, Val::TXT_FILES);
 		IupSetAttributeHandle(filedlg, Attr::PARENTDIALOG, IupGetDialog(itemSaveas));
+		IupSetStrAttribute(filedlg, Attr::FILE, IupGetAttribute(multitext, Attr::FILENAME));
 
 		IupPopup(filedlg, IUP_CENTERPARENT, IUP_CENTERPARENT);
 
 		if (IupGetInt(filedlg, Attr::STATUS) != -1)
 		{
 			auto filename = IupGetAttribute(filedlg, Attr::VALUE);
-			auto str = IupGetAttribute(multitext, Attr::VALUE);
-			auto count = IupGetInt(multitext, Attr::COUNT);
-			if (Utils::writeFile(filename, str, count))
-			{
-				auto config = (Ihandle*)IupGetAttribute(multitext, Attr::CONFIG);
-				IupConfigRecentUpdate(config, filename);
-			}
+			Utils::saveasFile(multitext, filename);
 		}
 
 		IupDestroy(filedlg);
+		return IUP_DEFAULT;
+	}
+
+	int itemSaveActionCb(Ihandle* itemSave)
+	{
+		auto multitext = IupGetDialogChild(itemSave, Name::MULTITEXT);
+		auto filename = IupGetAttribute(multitext, Attr::FILENAME);
+		if (!filename)
+			itemSaveasActionCb(itemSave);
+		else
+			Utils::saveFile(multitext);
+		return IUP_DEFAULT;
+	}
+	
+	int itemRevertActionCb(Ihandle* itemRevert)
+	{
+		auto multitext = IupGetDialogChild(itemRevert, Name::MULTITEXT);
+		auto filename = IupGetAttribute(multitext, Attr::FILENAME);
+		Utils::openFile(itemRevert, filename);
 		return IUP_DEFAULT;
 	}
 
@@ -589,7 +635,10 @@ namespace Callbacks
 	{
 		auto dlg = IupGetDialog(itemExit);
 		auto config = (Ihandle*)IupGetAttribute(dlg, Attr::CONFIG);
-		std::cout << config << std::endl;
+
+		if(!Utils::saveCheck(itemExit))
+			return IUP_IGNORE;  /* to abort the CLOSE_CB callback */
+		
 		IupConfigDialogClosed(config, dlg, Group::MAIN_WINDOW);
 		IupConfigSave(config);
 		IupDestroy(config);
