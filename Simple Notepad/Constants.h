@@ -47,6 +47,8 @@ namespace Attr
 	const auto INSERT = "INSERT";
 	const auto SELECTION = "SELECTION";
 	const auto OPEN_CB = "OPEN_CB";
+	const auto FILENAME = "FILENAME";
+	const auto DIRTY = "DIRTY";
 }
 
 namespace Val
@@ -114,3 +116,4 @@ const auto FIND_NEXT_TITLE = "Find Next";
 const auto FIND_TITLE = "Find";
 const auto CLOSE_TITLE = "Close";
 const auto FIND_WHAT_TITLE = "Find What:";
+const auto DEFAULT_TITLE = "Untitled - Simple Notepad";

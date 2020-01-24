@@ -3,26 +3,32 @@
  * Version 1.0
  * -Dialog with multiline text field
  *
- * Version 1.2
+ * Version 1.02
  * -Added menu and submenu options
  *
- * Version 1.3
+ * Version 1.03
  * -Used pre-defined dialogs
  *
- * Version 1.4
+ * Version 1.04
  * -Custom dialogs for Find and Go to
  *
- * Version 1.5
+ * Version 1.05
  * -Added a toolbar and a statusbar
  *
- * Version 1.6
+ * Version 1.06
  * -Defined hotkeys to menu options
  *
- * Version 1.7
+ * Version 1.07
  * -Recent files and configuration file added
  *
- * Version 1.8
+ * Version 1.08
  * -Clipboard actions support
+ *
+ * Version 1.09
+ * -Drag and drop support
+ * -Command line support
+ * -Check file needs to be saved
+ * 
  */
 // ReSharper disable CppLocalVariableMayBeConst
 // ReSharper disable CppCStyleCast
@@ -41,6 +47,23 @@
 
 namespace Utils
 {
+	const char* strFileTitle(const char* filename)
+	{
+		/* Start at the last character */
+		auto len = (int)strlen(filename);
+		auto offset = len - 1;
+		while (offset != 0)
+		{
+			if (filename[offset] == '\\' || filename[offset] == '/')
+			{
+				offset++;
+				break;
+			}
+			offset--;
+		}
+		return filename + offset;
+	}
+	
 	int stringCompare(const char* l, const char* r, int case_sensitive)
 	{
 		if (!l || !r) return 0;
@@ -143,6 +166,17 @@ namespace Utils
 
 		fclose(file);
 		return 1;
+	}
+
+	void newFile(Ihandle* self)
+	{
+		auto dlg = IupGetDialog(self);
+		auto multitext = IupGetDialogChild(dlg, Name::MULTITEXT);
+
+		IupSetAttribute(dlg, Attr::TITLE, DEFAULT_TITLE);
+		IupSetAttribute(multitext, Attr::FILENAME, nullptr);
+		IupSetAttribute(multitext, Attr::DIRTY, Val::N);
+		IupSetAttribute(multitext, Attr::VALUE, "");
 	}
 }
 
