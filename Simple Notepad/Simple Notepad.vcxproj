@@ -27,21 +27,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="iupcomp\IupComp.cpp" />
-    <ClCompile Include="iupcomp\IupLabelComp.cpp" />
-    <ClCompile Include="iupcomp\IupTextComp.cpp" />
-    <ClCompile Include="SimpleNotepad.cpp" />
-    <ClCompile Include="utils\Callbacks.cpp" />
-    <ClCompile Include="utils\Utilities.cpp" />
+    <ClCompile Include="src\iupcomp\IupComp.cpp" />
+    <ClCompile Include="src\iupcomp\IupLabelComp.cpp" />
+    <ClCompile Include="src\iupcomp\IupTextComp.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\utils\Callbacks.cpp" />
+    <ClCompile Include="src\utils\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="iupcomp\IupComp.h" />
-    <ClInclude Include="iupcomp\IupLabelComp.h" />
-    <ClInclude Include="utils\Constants.h" />
-    <ClInclude Include="iupcomp\IupTextComp.h" />
-    <ClInclude Include="utils\Callbacks.h" />
-    <ClInclude Include="utils\Enums.h" />
-    <ClInclude Include="utils\Utilities.h" />
+    <ClInclude Include="include\iupcomp\IupComp.h" />
+    <ClInclude Include="include\iupcomp\IupLabelComp.h" />
+    <ClInclude Include="include\utils\Constants.h" />
+    <ClInclude Include="include\iupcomp\IupTextComp.h" />
+    <ClInclude Include="include\utils\Callbacks.h" />
+    <ClInclude Include="include\utils\Enums.h" />
+    <ClInclude Include="include\utils\Utilities.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F33780AC-1749-4F6E-AE0E-FD45AD501805}</ProjectGuid>
@@ -84,12 +84,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)Bin$(Platform)$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Temp$(Platform)$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Out$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Tmp$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)Bin$(Platform)$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Temp$(Platform)$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Out$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Tmp$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -117,7 +117,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>T:\lib\mgeo\iup\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Simple Notepad\include;T:\lib\mgeo\iup\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -131,7 +131,7 @@ copy "T:\lib\mgeo\iup\lib\dll12_64\iupimglib.dll" "$(OutDir)\iupimglib.dll";</Co
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>T:\lib\mgeo\iup\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Simple Notepad\include;T:\lib\mgeo\iup\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>

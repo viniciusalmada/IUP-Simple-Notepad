@@ -1,5 +1,5 @@
-#include "IupLabelComp.h"
-#include "../utils/Constants.h"
+#include "iupcomp/IupLabelComp.h"
+#include "utils/Constants.h"
 
 void IupLabelComp::titleForm(const char* format,...)
 {

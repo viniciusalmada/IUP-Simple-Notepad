@@ -15,45 +15,45 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SimpleNotepad.cpp">
+    <ClCompile Include="src\iupcomp\IupComp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="iupcomp\IupTextComp.cpp">
+    <ClCompile Include="src\iupcomp\IupLabelComp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils\Utilities.cpp">
+    <ClCompile Include="src\iupcomp\IupTextComp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils\Callbacks.cpp">
+    <ClCompile Include="src\utils\Callbacks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="iupcomp\IupComp.cpp">
+    <ClCompile Include="src\utils\Utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="iupcomp\IupLabelComp.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="iupcomp\IupTextComp.h">
+    <ClInclude Include="include\iupcomp\IupComp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\Utilities.h">
+    <ClInclude Include="include\iupcomp\IupLabelComp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\Callbacks.h">
+    <ClInclude Include="include\iupcomp\IupTextComp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\Constants.h">
+    <ClInclude Include="include\utils\Callbacks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="iupcomp\IupLabelComp.h">
+    <ClInclude Include="include\utils\Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="iupcomp\IupComp.h">
+    <ClInclude Include="include\utils\Enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\Enums.h">
+    <ClInclude Include="include\utils\Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

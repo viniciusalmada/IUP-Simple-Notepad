@@ -1,5 +1,6 @@
-﻿#include "IupComp.h"
-#include "../utils/Constants.h"
+﻿#include "iupcomp/IupComp.h"
+#include "utils/Constants.h"
+
 #include <string>
 
 

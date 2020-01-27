@@ -1,13 +1,13 @@
-#include "Callbacks.h"
+#include "utils/Callbacks.h"
 
 #include <cstdlib>
 #include <cstring>
 
-#include "Utilities.h"
 #include "iup.h"
 #include "iup_config.h"
-#include "Constants.h"
-#include "../iupcomp/IupLabelComp.h"
+#include "utils/Utilities.h"
+#include "utils/Constants.h"
+#include "iupcomp/IupLabelComp.h"
 
 int Callbacks::dropFilesCb(Ihandle* ih, const char* filename)
 {

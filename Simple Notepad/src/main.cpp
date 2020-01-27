@@ -45,11 +45,12 @@
 #include "iup.h"
 #include "iup_config.h"
 
-#include "iupcomp/IupTextComp.h"
-#include "utils/Utilities.h"
-#include "utils/Callbacks.h"
 #include "utils/Constants.h"
+#include "utils/Callbacks.h"
+#include "utils/Utilities.h"
+#include "iupcomp/IupTextComp.h"
 #include "iupcomp/IupLabelComp.h"
+
 
 int main(int argc, char* argv[])
 {
@@ -73,13 +74,9 @@ int main(int argc, char* argv[])
 	multitextIupComp.setFont(font);
 
 	IupLabelComp lblStatusBar = IupLabelComp(IupLabel("Lin 1, Col 1"));
-	// auto lblStatusbar = IupLabel("Lin 1, Col 1");
 	lblStatusBar.setName(Name::STATUSBAR);
 	lblStatusBar.expand(Expand::HORIZONTAL);
 	lblStatusBar.padding(10, 5);
-	// IupSetAttribute(lblStatusbar, Attr::NAME, Name::STATUSBAR);
-	// IupSetAttribute(lblStatusbar, Attr::EXPAND, Val::HORIZONTAL);
-	// IupSetAttribute(lblStatusbar, Attr::PADDING, P_10_X_5);
 
 	auto itemNew = IupItem("New\tCtrl+N", nullptr);
 	IupSetAttribute(itemNew, Attr::IMAGE, IUP::IUP_FILE_NEW);
@@ -209,7 +206,7 @@ int main(int argc, char* argv[])
 
 	auto menu = IupMenu(submenuFile, submenuEdit, submenuFormat, submenuHelp, NULL);
 
-	auto vbox = IupVbox(toolbar, multitextIupComp.handle(), lblStatusbar, NULL);
+	auto vbox = IupVbox(toolbar, multitextIupComp.handle(), lblStatusBar.handle(), NULL);
 
 	auto dlg = IupDialog(vbox);
 	IupSetAttributeHandle(dlg, Attr::MENU, menu);
