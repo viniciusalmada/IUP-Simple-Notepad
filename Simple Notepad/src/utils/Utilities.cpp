@@ -1,11 +1,11 @@
-#include "Utilities.h"
+#include "utils/Utilities.h"
 
 #include <cstdio>
 #include <cstring>
 #include <cctype>
 
 #include "iup_config.h"
-#include "Constants.h"
+#include "utils/Constants.h"
 
 const char* Utils::strFileTitle(const char* filename)
 {

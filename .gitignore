@@ -388,3 +388,4 @@ MigrationBackup/
 
 # Files under Temp* folder
 Tempx64Debug*
+Tmp*
