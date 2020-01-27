@@ -389,3 +389,6 @@ MigrationBackup/
 # Files under Temp* folder
 Tempx64Debug*
 Tmp*
+
+# VCXPROJ files
+*.vcxproj*
