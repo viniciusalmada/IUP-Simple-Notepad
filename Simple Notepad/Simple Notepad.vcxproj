@@ -29,11 +29,13 @@
   <ItemGroup>
     <ClCompile Include="iupcomp\IupTextComp.cpp" />
     <ClCompile Include="SimpleNotepad.cpp" />
+    <ClCompile Include="utils\Callbacks.cpp" />
     <ClCompile Include="utils\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h" />
     <ClInclude Include="iupcomp\IupTextComp.h" />
+    <ClInclude Include="utils\Callbacks.h" />
     <ClInclude Include="utils\Utilities.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
