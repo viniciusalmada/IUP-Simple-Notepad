@@ -1,5 +1,6 @@
 #include "iupcomp/IupTextComp.h"
 #include "utils/Constants.h"
+#include "utils/IupUtils.h"
 
 void IupTextComp::isMultiline(bool value)
 {
@@ -20,6 +21,12 @@ void IupTextComp::isDirty(bool value)
 void IupTextComp::setFont(const char* font)
 {
 	IupSetStrAttribute(iupComp, Attr::FONT, font);
+}
+
+void IupTextComp::setFont(IupConfigComp& config)
+{
+	const auto font = IupUtils::configFont(config);
+	setFont(font);
 }
 
 void IupTextComp::setCaretPositionCallback(Icallback call)

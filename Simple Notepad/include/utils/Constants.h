@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
 namespace Attr
 {
 	const auto ACTION = "ACTION";
@@ -128,3 +130,5 @@ const auto FIND_TITLE = "Find";
 const auto CLOSE_TITLE = "Close";
 const auto FIND_WHAT_TITLE = "Find What:";
 const auto DEFAULT_TITLE = "Untitled - Simple Notepad";
+
+#endif

@@ -6,12 +6,10 @@
 class IupLabelComp : public IupComp
 {
 public:
-	IupLabelComp(Ihandle* iupLabel): IupComp(iupLabel)
-	{
-	}
+	IupLabelComp(Ihandle* iupLabel): IupComp(iupLabel) { }
 
 	static Ihandle* separatorVert() { return IupSetAttributes(IupLabel(nullptr), "SEPARATOR=VERTICAL"); }
-	void titleForm(const char* format,...);
+	void titleForm(const char* format, ...);
 };
 
 #endif

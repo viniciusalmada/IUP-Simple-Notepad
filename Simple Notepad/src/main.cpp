@@ -33,7 +33,9 @@
  * -New files created for better organization of the project
  * -Code refactored to use the new file
  * -Iup components classes created
- * 
+ * -Files reorganized in a C++ project standard
+ *
+ *
  */
 // ReSharper disable CppLocalVariableMayBeConst
 // ReSharper disable CppCStyleCast
@@ -50,37 +52,63 @@
 #include "utils/Utilities.h"
 #include "iupcomp/IupTextComp.h"
 #include "iupcomp/IupLabelComp.h"
+#include "iupcomp/IupConfigComp.h"
+#include "iupcomp/IupItemComp.h"
+#include "iupcomp/IupFlatButtonComp.h"
 
+void startIup()
+{
+	IupOpen(nullptr, nullptr);
+	IupImageLibOpen();
+}
+
+void setupConfig(IupConfigComp& config)
+{
+	config.setName("simple_notepad");
+	config.load();
+}
+
+void setupMultilineText(IupTextComp& text, IupConfigComp& config)
+{
+	text.isMultiline(true);
+	text.expand(Expand::YES);
+	text.isDirty(false);
+	text.setName(Name::MULTITEXT);
+	text.setCaretPositionCallback((Icallback)Callbacks::multitextCaretCb);
+	text.setValueChangedCallback((Icallback)Callbacks::multitextValueChangedCb);
+	text.setDropFileCallback((Icallback)Callbacks::dropFilesCb);
+	text.setFont(config);
+}
+
+void setupStatusBar(IupLabelComp& lbl)
+{
+	lbl.setName(Name::STATUSBAR);
+	lbl.expand(Expand::HORIZONTAL);
+	lbl.padding(10, 5);
+}
 
 int main(int argc, char* argv[])
 {
-	IupOpen(&argc, &argv);
-	IupImageLibOpen();
+	startIup();
 
-	auto config = IupConfig();
-	IupSetAttribute(config, Attr::APP_NAME, "simple_notepad");
-	IupConfigLoad(config);
+	IupConfigComp config{ IupConfig() };
+	setupConfig(config);
 
-	IupTextComp multitextIupComp = IupTextComp(IupText(nullptr));
-	multitextIupComp.isMultiline(true);
-	multitextIupComp.expand(Expand::YES);
-	multitextIupComp.isDirty(false);
-	multitextIupComp.setName(Name::MULTITEXT);
-	multitextIupComp.setCaretPositionCallback((Icallback)Callbacks::multitextCaretCb);
-	multitextIupComp.setValueChangedCallback((Icallback)Callbacks::multitextValueChangedCb);
-	multitextIupComp.setDropFileCallback((Icallback)Callbacks::dropFilesCb);
+	IupTextComp multitextIupComp{ IupText(nullptr) };
+	setupMultilineText(multitextIupComp, config);
 
-	auto font = IupConfigGetVariableStr(config, Group::MAIN_WINDOW, Key::FONT);
-	multitextIupComp.setFont(font);
+	IupLabelComp lblStatusBar{ IupLabel("Lin 1, Col 1") };
+	setupStatusBar(lblStatusBar);
 
-	IupLabelComp lblStatusBar = IupLabelComp(IupLabel("Lin 1, Col 1"));
-	lblStatusBar.setName(Name::STATUSBAR);
-	lblStatusBar.expand(Expand::HORIZONTAL);
-	lblStatusBar.padding(10, 5);
+	IupItemComp itemNew{ IupItem("New\tCtrl+N", nullptr) };
+	itemNew.image(IUP::IUP_FILE_NEW);
+	itemNew.actionCallback(Callbacks::itemNewActionCb);
 
-	auto itemNew = IupItem("New\tCtrl+N", nullptr);
-	IupSetAttribute(itemNew, Attr::IMAGE, IUP::IUP_FILE_NEW);
-	IupSetCallback(itemNew, Attr::ACTION, Callbacks::itemNewActionCb);
+	IupFlatButtonComp fButtonNew{ IupFlatButton(nullptr) };
+	fButtonNew.image(IUP::IUP_FILE_NEW);
+	fButtonNew.flatActionCallback(Callbacks::itemNewActionCb);
+	fButtonNew.tip("New (Ctrl+N)");
+	
 	auto buttonNew = IupFlatButton(nullptr);
 	IupSetAttribute(buttonNew, Attr::IMAGE, IUP::IUP_FILE_NEW);
 	IupSetCallback(buttonNew, Attr::FLAT_ACTION, Callbacks::itemNewActionCb);

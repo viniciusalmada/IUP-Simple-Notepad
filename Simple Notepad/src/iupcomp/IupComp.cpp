@@ -30,7 +30,22 @@ void IupComp::padding(int padHor, int padVer)
 	IupSetAttribute(iupComp, Attr::PADDING, padding.c_str());
 }
 
+void IupComp::image(const char* imageFile)
+{
+	IupSetAttribute(iupComp, Attr::IMAGE, imageFile);
+}
+
 char* IupComp::getName()
 {
 	return IupGetAttribute(iupComp, Attr::NAME);
+}
+
+void IupComp::actionCallback(Icallback action)
+{
+	IupSetCallback(iupComp, Attr::ACTION, action);
+}
+
+void IupComp::flatActionCallback(Icallback action)
+{
+	IupSetCallback(iupComp, Attr::FLAT_ACTION, action);
 }
