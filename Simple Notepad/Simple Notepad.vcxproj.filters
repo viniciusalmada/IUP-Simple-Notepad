@@ -21,12 +21,18 @@
     <ClCompile Include="iupcomp\IupTextComp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils\Utilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="iupcomp\IupTextComp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
