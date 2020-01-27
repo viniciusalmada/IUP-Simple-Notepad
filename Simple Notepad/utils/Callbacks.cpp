@@ -4,9 +4,9 @@
 #include <cstring>
 
 #include "Utilities.h"
-#include "../Constants.h"
 #include "iup.h"
 #include "iup_config.h"
+#include "Constants.h"
 
 
 namespace Callbacks

@@ -33,7 +33,7 @@
     <ClCompile Include="utils\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Constants.h" />
+    <ClInclude Include="utils\Constants.h" />
     <ClInclude Include="iupcomp\IupTextComp.h" />
     <ClInclude Include="utils\Callbacks.h" />
     <ClInclude Include="utils\Utilities.h" />

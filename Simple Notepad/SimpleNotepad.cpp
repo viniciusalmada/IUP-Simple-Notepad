@@ -28,6 +28,11 @@
  * -Drag and drop support
  * -Command line support
  * -Check file needs to be saved
+ *
+ * Version 1.09.1
+ * -New files created for better organization of the project
+ * -Code refactored to use the new file
+ * -Iup components classes created
  * 
  */
 // ReSharper disable CppLocalVariableMayBeConst
@@ -39,10 +44,10 @@
 
 #include "iup.h"
 #include "iup_config.h"
-#include "Constants.h"
 #include "iupcomp/IupTextComp.h"
 #include "utils/Utilities.h"
 #include "utils/Callbacks.h"
+#include "utils/Constants.h"
 
 int main(int argc, char* argv[])
 {

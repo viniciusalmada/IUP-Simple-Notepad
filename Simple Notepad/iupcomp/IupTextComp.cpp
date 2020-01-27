@@ -1,5 +1,5 @@
 #include "IupTextComp.h"
-#include "../Constants.h"
+#include "../utils/Constants.h"
 
 void IupTextComp::isMultiline(bool value)
 {

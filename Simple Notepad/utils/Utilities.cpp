@@ -5,7 +5,7 @@
 #include <cctype>
 
 #include "iup_config.h"
-#include "../Constants.h"
+#include "Constants.h"
 
 namespace Utils
 {
