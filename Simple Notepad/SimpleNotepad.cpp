@@ -44,6 +44,7 @@
 #include "iup_config.h"
 #include "Constants.h"
 #include <iostream>
+#include "IupTextComp.h"
 
 namespace Utils
 {
@@ -655,17 +656,17 @@ int main(int argc, char* argv[])
 	IupSetAttribute(config, Attr::APP_NAME, "simple_notepad");
 	IupConfigLoad(config);
 
-	auto multiTextField = IupText(nullptr);
-	IupSetAttribute(multiTextField, Attr::MULTILINE, Val::YES);
-	IupSetAttribute(multiTextField, Attr::EXPAND, Val::YES);
-	IupSetAttribute(multiTextField, Attr::NAME, Name::MULTITEXT);
-	IupSetAttribute(multiTextField, Attr::DIRTY, Val::NO);
-	IupSetCallback(multiTextField, Attr::CARET_CB, (Icallback)Callbacks::multitextCaretCb);
-	IupSetCallback(multiTextField, Attr::VALUECHANGED_CB, (Icallback)Callbacks::multitextValueChangedCb);
-	IupSetCallback(multiTextField, Attr::DROPFILES_CB, (Icallback)Callbacks::dropFilesCb);
+	auto multitextIupComp = IupTextComp(IupText(nullptr));
+	multitextIupComp.isMultiline(true);
+	multitextIupComp.isExpanded(true);
+	multitextIupComp.isDirty(false);
+	multitextIupComp.setName(Name::MULTITEXT);
+	multitextIupComp.setCaretPositionCallback((Icallback)Callbacks::multitextCaretCb);
+	multitextIupComp.setValueChangedCallback((Icallback)Callbacks::multitextValueChangedCb);
+	multitextIupComp.setDropFileCallback((Icallback)Callbacks::dropFilesCb);
 
 	auto font = IupConfigGetVariableStr(config, Group::MAIN_WINDOW, Key::FONT);
-	if (font) IupSetStrAttribute(multiTextField, Attr::FONT, font);
+	multitextIupComp.setFont(font);
 
 	auto lblStatusbar = IupLabel("Lin 1, Col 1");
 	IupSetAttribute(lblStatusbar, Attr::NAME, Name::STATUSBAR);
@@ -800,7 +801,7 @@ int main(int argc, char* argv[])
 
 	auto menu = IupMenu(submenuFile, submenuEdit, submenuFormat, submenuHelp, NULL);
 
-	auto vbox = IupVbox(toolbar, multiTextField, lblStatusbar, NULL);
+	auto vbox = IupVbox(toolbar, multitextIupComp.handle(), lblStatusbar, NULL);
 
 	auto dlg = IupDialog(vbox);
 	IupSetAttributeHandle(dlg, Attr::MENU, menu);
