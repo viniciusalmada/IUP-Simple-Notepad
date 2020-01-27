@@ -4,53 +4,35 @@
 void IupTextComp::isMultiline(bool value)
 {
 	if (value)
-		IupSetAttribute(iupText, Attr::MULTILINE, Val::YES);
+		IupSetAttribute(iupComp, Attr::MULTILINE, Val::YES);
 	else
-		IupSetAttribute(iupText, Attr::MULTILINE, Val::NO);
-}
-
-void IupTextComp::isExpanded(bool value)
-{
-	if (value)
-		IupSetAttribute(iupText, Attr::EXPAND, Val::YES);
-	else
-		IupSetAttribute(iupText, Attr::EXPAND, Val::NO);
-}
-
-void IupTextComp::setName(const char* name)
-{
-	IupSetAttribute(iupText, Attr::NAME, name);
+		IupSetAttribute(iupComp, Attr::MULTILINE, Val::NO);
 }
 
 void IupTextComp::isDirty(bool value)
 {
 	if (value)
-		IupSetAttribute(iupText, Attr::DIRTY, Val::YES);
+		IupSetAttribute(iupComp, Attr::DIRTY, Val::YES);
 	else
-		IupSetAttribute(iupText, Attr::DIRTY, Val::NO);
+		IupSetAttribute(iupComp, Attr::DIRTY, Val::NO);
 }
 
 void IupTextComp::setFont(const char* font)
 {
-	IupSetStrAttribute(iupText, Attr::FONT, font);
-}
-
-char* IupTextComp::getName()
-{
-	return IupGetAttribute(iupText, Attr::NAME);
+	IupSetStrAttribute(iupComp, Attr::FONT, font);
 }
 
 void IupTextComp::setCaretPositionCallback(Icallback call)
 {
-	IupSetCallback(iupText, Attr::CARET_CB, call);
+	IupSetCallback(iupComp, Attr::CARET_CB, call);
 }
 
 void IupTextComp::setValueChangedCallback(Icallback call)
 {
-	IupSetCallback(iupText, Attr::VALUECHANGED_CB, call);
+	IupSetCallback(iupComp, Attr::VALUECHANGED_CB, call);
 }
 
 void IupTextComp::setDropFileCallback(Icallback call)
 {
-	IupSetCallback(iupText, Attr::DROPFILES_CB, call);
+	IupSetCallback(iupComp, Attr::DROPFILES_CB, call);
 }

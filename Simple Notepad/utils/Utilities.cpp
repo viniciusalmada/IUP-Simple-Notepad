@@ -7,7 +7,6 @@
 #include "iup_config.h"
 #include "Constants.h"
 
-
 const char* Utils::strFileTitle(const char* filename)
 {
 	/* Start at the last character */

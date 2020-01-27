@@ -27,6 +27,12 @@
     <ClCompile Include="utils\Callbacks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="iupcomp\IupComp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="iupcomp\IupLabelComp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="iupcomp\IupTextComp.h">
@@ -39,6 +45,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\Constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iupcomp\IupLabelComp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iupcomp\IupComp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

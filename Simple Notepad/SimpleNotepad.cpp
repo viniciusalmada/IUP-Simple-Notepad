@@ -44,10 +44,12 @@
 
 #include "iup.h"
 #include "iup_config.h"
+
 #include "iupcomp/IupTextComp.h"
 #include "utils/Utilities.h"
 #include "utils/Callbacks.h"
 #include "utils/Constants.h"
+#include "iupcomp/IupLabelComp.h"
 
 int main(int argc, char* argv[])
 {
@@ -58,9 +60,9 @@ int main(int argc, char* argv[])
 	IupSetAttribute(config, Attr::APP_NAME, "simple_notepad");
 	IupConfigLoad(config);
 
-	auto multitextIupComp = IupTextComp(IupText(nullptr));
+	IupTextComp multitextIupComp = IupTextComp(IupText(nullptr));
 	multitextIupComp.isMultiline(true);
-	multitextIupComp.isExpanded(true);
+	multitextIupComp.expand(Expand::YES);
 	multitextIupComp.isDirty(false);
 	multitextIupComp.setName(Name::MULTITEXT);
 	multitextIupComp.setCaretPositionCallback((Icallback)Callbacks::multitextCaretCb);
@@ -70,10 +72,14 @@ int main(int argc, char* argv[])
 	auto font = IupConfigGetVariableStr(config, Group::MAIN_WINDOW, Key::FONT);
 	multitextIupComp.setFont(font);
 
-	auto lblStatusbar = IupLabel("Lin 1, Col 1");
-	IupSetAttribute(lblStatusbar, Attr::NAME, Name::STATUSBAR);
-	IupSetAttribute(lblStatusbar, Attr::EXPAND, Val::HORIZONTAL);
-	IupSetAttribute(lblStatusbar, Attr::PADDING, P_10_X_5);
+	IupLabelComp lblStatusBar = IupLabelComp(IupLabel("Lin 1, Col 1"));
+	// auto lblStatusbar = IupLabel("Lin 1, Col 1");
+	lblStatusBar.setName(Name::STATUSBAR);
+	lblStatusBar.expand(Expand::HORIZONTAL);
+	lblStatusBar.padding(10, 5);
+	// IupSetAttribute(lblStatusbar, Attr::NAME, Name::STATUSBAR);
+	// IupSetAttribute(lblStatusbar, Attr::EXPAND, Val::HORIZONTAL);
+	// IupSetAttribute(lblStatusbar, Attr::PADDING, P_10_X_5);
 
 	auto itemNew = IupItem("New\tCtrl+N", nullptr);
 	IupSetAttribute(itemNew, Attr::IMAGE, IUP::IUP_FILE_NEW);
@@ -160,9 +166,9 @@ int main(int argc, char* argv[])
 
 
 	auto toolbar = IupHbox(buttonNew, btnOpen, btnSave,
-							IupSetAttributes(IupLabel(nullptr), "SEPARATOR=VERTICAL"),
+							IupLabelComp::separatorVert(),
 							btnCut, btnCopy, btnPaste,
-							IupSetAttributes(IupLabel(nullptr), "SEPARATOR=VERTICAL"),
+							IupLabelComp::separatorVert(),
 							btnFind, NULL);
 	IupSetAttribute(toolbar, Attr::MARGIN, M_5_X_5);
 	IupSetAttribute(toolbar, Attr::GAP, "2");

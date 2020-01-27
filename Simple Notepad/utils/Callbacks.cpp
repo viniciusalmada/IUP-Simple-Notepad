@@ -7,7 +7,7 @@
 #include "iup.h"
 #include "iup_config.h"
 #include "Constants.h"
-
+#include "../iupcomp/IupLabelComp.h"
 
 int Callbacks::dropFilesCb(Ihandle* ih, const char* filename)
 {
@@ -231,8 +231,10 @@ int Callbacks::itemGotoActionCb(Ihandle* itemGoto)
 	auto multitext = IupGetDialogChild(itemGoto, Name::MULTITEXT);
 	auto lineCount = IupGetInt(multitext, Attr::LINECOUNT);
 
-	auto lbl = IupLabel(nullptr);
-	IupSetfAttribute(lbl, Attr::TITLE, LINE_NUM_F, lineCount);
+	IupLabelComp lbl = IupLabelComp(IupLabel(nullptr));
+	// auto lbl = IupLabel(nullptr);
+	lbl.titleForm(LINE_NUM_F, lineCount);
+	// IupSetfAttribute(lbl, Attr::TITLE, LINE_NUM_F, lineCount);
 
 	auto txt = IupText(nullptr);
 	IupSetAttribute(txt, Attr::MASK, IUP_MASK_UINT); /* unsigned integers numbers only */
@@ -249,7 +251,7 @@ int Callbacks::itemGotoActionCb(Ihandle* itemGoto)
 	IupSetAttribute(btCancel, Attr::PADDING, P_10_X_2);
 
 	auto btHbox = IupHbox(IupFill(), btOk, btCancel, NULL);
-	auto box = IupVbox(lbl, txt, IupSetAttributes(btHbox, Attr::NORMAL_HOR), NULL);
+	auto box = IupVbox(lbl.handle(), txt, IupSetAttributes(btHbox, Attr::NORMAL_HOR), NULL);
 	IupSetAttribute(box, Attr::MARGIN, M_10_X_10);
 	IupSetAttribute(box, Attr::GAP, _5);
 

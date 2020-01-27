@@ -27,15 +27,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="iupcomp\IupComp.cpp" />
+    <ClCompile Include="iupcomp\IupLabelComp.cpp" />
     <ClCompile Include="iupcomp\IupTextComp.cpp" />
     <ClCompile Include="SimpleNotepad.cpp" />
     <ClCompile Include="utils\Callbacks.cpp" />
     <ClCompile Include="utils\Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="iupcomp\IupComp.h" />
+    <ClInclude Include="iupcomp\IupLabelComp.h" />
     <ClInclude Include="utils\Constants.h" />
     <ClInclude Include="iupcomp\IupTextComp.h" />
     <ClInclude Include="utils\Callbacks.h" />
+    <ClInclude Include="utils\Enums.h" />
     <ClInclude Include="utils\Utilities.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
