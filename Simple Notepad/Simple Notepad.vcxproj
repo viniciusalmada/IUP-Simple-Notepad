@@ -27,10 +27,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IupTextComp.cpp" />
     <ClCompile Include="SimpleNotepad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="IupTextComp.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F33780AC-1749-4F6E-AE0E-FD45AD501805}</ProjectGuid>

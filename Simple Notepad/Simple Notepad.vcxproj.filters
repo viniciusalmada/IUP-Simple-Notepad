@@ -18,9 +18,15 @@
     <ClCompile Include="SimpleNotepad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IupTextComp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IupTextComp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
