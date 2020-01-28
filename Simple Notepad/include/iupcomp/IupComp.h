@@ -14,7 +14,7 @@ public:
 	void expand(Expand expand);
 	void padding(int padHor, int padVer);
 	void image(const char* imageFile);
-
+	void canFocus(bool value);
 
 	char* getName();
 	Ihandle* handle() { return iupComp; }

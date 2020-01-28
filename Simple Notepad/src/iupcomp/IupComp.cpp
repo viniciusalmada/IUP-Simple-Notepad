@@ -35,6 +35,12 @@ void IupComp::image(const char* imageFile)
 	IupSetAttribute(iupComp, Attr::IMAGE, imageFile);
 }
 
+void IupComp::canFocus(bool value)
+{
+	IupSetAttribute(iupComp, Attr::CANFOCUS,
+					value ? Val::YES : Val::NO);
+}
+
 char* IupComp::getName()
 {
 	return IupGetAttribute(iupComp, Attr::NAME);
