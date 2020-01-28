@@ -231,7 +231,7 @@ int Callbacks::itemGotoActionCb(Ihandle* itemGoto)
 	auto multitext = IupGetDialogChild(itemGoto, Name::MULTITEXT);
 	auto lineCount = IupGetInt(multitext, Attr::LINECOUNT);
 
-	IupLabelComp lbl = IupLabelComp(IupLabel(nullptr));
+	IupLabelComp lbl = IupLabelComp(nullptr);
 	// auto lbl = IupLabel(nullptr);
 	lbl.titleForm(LINE_NUM_F, lineCount);
 	// IupSetfAttribute(lbl, Attr::TITLE, LINE_NUM_F, lineCount);

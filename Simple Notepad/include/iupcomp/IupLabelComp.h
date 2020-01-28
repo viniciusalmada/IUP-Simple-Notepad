@@ -6,7 +6,7 @@
 class IupLabelComp : public IupComp
 {
 public:
-	IupLabelComp(Ihandle* iupLabel): IupComp(iupLabel) { }
+	IupLabelComp(const char* title): IupComp(IupLabel(title)) { }
 
 	static Ihandle* separatorVert();
 	void titleForm(const char* format, ...);

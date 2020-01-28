@@ -59,6 +59,11 @@ char* IupComp::getName()
 	return IupGetAttribute(iupComp, Attr::NAME);
 }
 
+Ihandle* IupComp::handle()
+{
+	return iupComp;
+}
+
 void IupComp::actionCallback(Icallback action)
 {
 	IupSetCallback(iupComp, Attr::ACTION, action);

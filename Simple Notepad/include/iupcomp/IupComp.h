@@ -19,7 +19,7 @@ public:
 	void gap(int space);
 
 	char* getName();
-	Ihandle* handle() { return iupComp; }
+	Ihandle* handle();
 
 	void actionCallback(Icallback action);
 	void flatActionCallback(Icallback action);

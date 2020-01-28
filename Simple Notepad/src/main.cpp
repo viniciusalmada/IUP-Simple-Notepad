@@ -97,24 +97,26 @@ int main(int argc, char* argv[])
 	IupTextComp multitextIupComp{ IupText(nullptr) };
 	setupMultilineText(multitextIupComp, config);
 
-	IupLabelComp lblStatusBar{ IupLabel("Lin 1, Col 1") };
+	IupLabelComp lblStatusBar{ "Lin 1, Col 1" };
 	setupStatusBar(lblStatusBar);
 
 	IupItemComp itemNew{ IupItem("New\tCtrl+N", nullptr) };
 	itemNew.image(IUP::IUP_FILE_NEW);
 	itemNew.actionCallback(Callbacks::itemNewActionCb);
 
-	IupFlatButtonComp fButtonNew{ IupFlatButton(nullptr) };
-	fButtonNew.image(IUP::IUP_FILE_NEW);
-	fButtonNew.flatActionCallback(Callbacks::itemNewActionCb);
-	fButtonNew.tip("New (Ctrl+N)");
-	
-	auto buttonNew = IupFlatButton(nullptr);
-	IupSetAttribute(buttonNew, Attr::IMAGE, IUP::IUP_FILE_NEW);
-	IupSetCallback(buttonNew, Attr::FLAT_ACTION, Callbacks::itemNewActionCb);
-	IupSetAttribute(buttonNew, Attr::TIP, "New (Ctrl+N");
-	IupSetAttribute(buttonNew, Attr::CANFOCUS, Val::NO);
-	IupSetAttribute(buttonNew, Attr::PADDING, M_5_X_5);
+	IupFlatButtonComp newFButton;
+	newFButton.image(IUP::IUP_FILE_NEW);
+	newFButton.flatActionCallback(Callbacks::itemNewActionCb);
+	// newFButton.tip("New (Ctrl+N)");
+	newFButton.canFocus(false);
+	newFButton.padding(5, 5);
+
+	// auto buttonNew = IupFlatButton(nullptr);
+	// IupSetAttribute(buttonNew, Attr::IMAGE, IUP::IUP_FILE_NEW);
+	// IupSetCallback(buttonNew, Attr::FLAT_ACTION, Callbacks::itemNewActionCb);
+	// IupSetAttribute(buttonNew, Attr::TIP, "New (Ctrl+N");
+	// IupSetAttribute(buttonNew, Attr::CANFOCUS, Val::NO);
+	// IupSetAttribute(buttonNew, Attr::PADDING, M_5_X_5);
 
 	auto itemOpen = IupItem("&Open...\tCtrl+O", nullptr);
 	IupSetAttribute(itemOpen, Attr::IMAGE, IUP::IUP_FILE_OPEN);
@@ -190,7 +192,7 @@ int main(int argc, char* argv[])
 	IupSetAttribute(btnFind, Attr::PADDING, M_5_X_5);
 
 
-	auto toolbar = IupHbox(buttonNew, btnOpen, btnSave,
+	auto toolbar = IupHbox(newFButton.handle(), btnOpen, btnSave,
 							IupLabelComp::separatorVert(),
 							btnCut, btnCopy, btnPaste,
 							IupLabelComp::separatorVert(),
@@ -217,7 +219,7 @@ int main(int argc, char* argv[])
 	auto recentMenu = IupMenu(nullptr);
 	auto submenuRecent = IupSubmenu("Recent &Files", recentMenu);
 
-	auto fileMenu = IupMenu(itemNew, itemOpen, itemSave, itemSaveas, itemRevert, IupSeparator(), submenuRecent,
+	auto fileMenu = IupMenu(itemNew.handle(), itemOpen, itemSave, itemSaveas, itemRevert, IupSeparator(), submenuRecent,
 							itemExit, NULL);
 	auto editMenu = IupMenu(itemCut, itemCopy, itemPaste, itemDelete, IupSeparator(), itemFind, itemGoto,
 							IupSeparator(), itemSelectAll, NULL);
@@ -242,7 +244,7 @@ int main(int argc, char* argv[])
 	IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
 	IupSetCallback(dlg, Attr::CLOSE_CB, Callbacks::itemExitActionCb);
 	IupSetCallback(dlg, Attr::DROPFILES_CB, (Icallback)Callbacks::dropFilesCb);
-	IupSetAttribute(dlg, Attr::CONFIG, (char*)config);
+	IupSetAttribute(dlg, Attr::CONFIG, (char*)config.handle());
 
 	IupSetCallback(editMenu, Attr::OPEN_CB, Callbacks::editMenuOpenCb);
 
@@ -255,9 +257,9 @@ int main(int argc, char* argv[])
 	IupSetCallback(dlg, "K_cF", Callbacks::itemFindActionCb);
 	IupSetCallback(dlg, "K_cG", Callbacks::itemGotoActionCb);
 
-	IupConfigRecentInit(config, recentMenu, Callbacks::configRecentCb, 10);
+	IupConfigRecentInit(config.handle(), recentMenu, Callbacks::configRecentCb, 10);
 
-	IupConfigDialogShow(config, dlg, Group::MAIN_WINDOW);
+	IupConfigDialogShow(config.handle(), dlg, Group::MAIN_WINDOW);
 
 	/* initialize the current file */
 	Utils::newFile(dlg);
