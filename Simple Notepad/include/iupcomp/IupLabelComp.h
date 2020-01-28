@@ -8,7 +8,7 @@ class IupLabelComp : public IupComp
 public:
 	IupLabelComp(Ihandle* iupLabel): IupComp(iupLabel) { }
 
-	static Ihandle* separatorVert() { return IupSetAttributes(IupLabel(nullptr), "SEPARATOR=VERTICAL"); }
+	static Ihandle* separatorVert();
 	void titleForm(const char* format, ...);
 };
 

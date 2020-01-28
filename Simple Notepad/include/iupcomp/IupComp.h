@@ -15,6 +15,8 @@ public:
 	void padding(int padHor, int padVer);
 	void image(const char* imageFile);
 	void canFocus(bool value);
+	void margin(int marginHor, int marginVer);
+	void gap(int space);
 
 	char* getName();
 	Ihandle* handle() { return iupComp; }

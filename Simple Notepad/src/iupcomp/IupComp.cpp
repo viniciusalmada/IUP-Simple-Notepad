@@ -41,6 +41,19 @@ void IupComp::canFocus(bool value)
 					value ? Val::YES : Val::NO);
 }
 
+void IupComp::margin(int marginHor, int marginVer)
+{
+	std::string margin = std::to_string(marginHor);
+	margin.append("x").append(std::to_string(marginVer));
+	IupSetAttribute(iupComp, Attr::MARGIN, margin.c_str());
+}
+
+void IupComp::gap(int space)
+{
+	std::string spaceS = std::to_string(space);
+	IupSetAttribute(iupComp, Attr::GAP, spaceS.c_str());
+}
+
 char* IupComp::getName()
 {
 	return IupGetAttribute(iupComp, Attr::NAME);
