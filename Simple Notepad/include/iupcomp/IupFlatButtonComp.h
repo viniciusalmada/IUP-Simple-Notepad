@@ -3,7 +3,6 @@
 
 #include <iup.h>
 #include "IupComp.h"
-#include "utils/Constants.h"
 
 class IupFlatButtonComp : public IupComp
 {
