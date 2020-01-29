@@ -60,6 +60,7 @@
 #include "iupcomp/IupFlatButtonComp.h"
 #include "iupcomp/IupHBoxComp.h"
 #include "iupcomp/IupSubmenuComp.h"
+#include "iupcomp/IupVBoxComp.h"
 
 void startIup()
 {
@@ -144,7 +145,7 @@ void setupToolbar(IupFlatButtonComp& newFButton,
 	findFButton.padding(5, 5);
 
 	toolbar.gap(2);
-	toolbar.margin(5,2);
+	toolbar.margin(5, 2);
 }
 
 void setupFileMenu(IupItemComp& newItem,
@@ -172,11 +173,11 @@ void setupFileMenu(IupItemComp& newItem,
 	saveAsItem.actionCallback(Callbacks::itemSaveasActionCb);
 	saveAsItem.padding(5, 5);
 	saveAsItem.setName(Name::ITEM_SAVEAS);
-	
+
 	revertItem.actionCallback(Callbacks::itemRevertActionCb);
 	revertItem.padding(5, 5);
 	revertItem.setName(Name::ITEM_REVERT);
-	
+
 	exitItem.actionCallback(Callbacks::itemExitActionCb);
 	exitItem.padding(5, 5);
 
@@ -340,7 +341,7 @@ int main(int argc, char* argv[])
 
 	IupSubmenuComp formatSubmenu{ "&Format", formatMenu };
 	setupFormatMenu(fontItem);
-	
+
 	/*************** HELP MENU *********************/
 	IupItemComp aboutItem{ "&About..." };
 
@@ -349,13 +350,20 @@ int main(int argc, char* argv[])
 	IupSubmenuComp helpSubmenu{ "&Help", helpMenu };
 	setupHelpMenu(aboutItem);
 
-	//////////////////////////
+	IupMenuComp menu{
+		IupMenu(fileSubmenu.handle(),
+				editSubmenu.handle(),
+				formatSubmenu.handle(),
+				helpSubmenu.handle(), NULL)
+	};
 
-	IupMenuComp menu{ IupMenu(fileSubmenu.handle(), editSubmenu.handle(), formatSubmenu.handle(), helpSubmenu.handle(), NULL) };
+	IupVBoxComp vbox{
+		IupVbox(toolbarHBox.handle(),
+				multitextIupComp.handle(),
+				lblStatusBar.handle(), NULL)
+	};
 
-	auto vbox = IupVbox(toolbarHBox.handle(), multitextIupComp.handle(), lblStatusBar.handle(), NULL);
-
-	auto dlg = IupDialog(vbox);
+	auto dlg = IupDialog(vbox.handle());
 	IupSetAttributeHandle(dlg, Attr::MENU, menu.handle());
 	IupSetAttribute(dlg, Attr::TITLE, "Simple Notepad");
 	IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
