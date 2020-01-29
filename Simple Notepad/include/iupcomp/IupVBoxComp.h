@@ -6,6 +6,9 @@
 class IupVBoxComp : public IupComp
 {
 public:
+	static const int IUP_V_BOX_COMP = 10;
 	IupVBoxComp(Ihandle* children, ...) : IupComp(IupVbox(children,NULL)) {}
+
+	int type() override { return IUP_V_BOX_COMP; }
 };
 #endif

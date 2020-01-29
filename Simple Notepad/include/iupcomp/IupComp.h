@@ -9,6 +9,7 @@ class IupComp
 protected:
 	Ihandle* iupComp;
 public:
+	virtual ~IupComp() = default;
 	IupComp(Ihandle* iupComp) { this->iupComp = iupComp; }
 	void setName(const char* name);
 	void expand(Expand expand);
@@ -23,5 +24,7 @@ public:
 
 	void actionCallback(Icallback action);
 	void flatActionCallback(Icallback action);
+
+	virtual int type() = 0;
 };
 #endif
