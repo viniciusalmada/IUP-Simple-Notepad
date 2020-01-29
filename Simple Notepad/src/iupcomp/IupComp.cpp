@@ -2,6 +2,7 @@
 #include "utils/Constants.h"
 
 #include <string>
+#include "iupcomp/IupConfigComp.h"
 
 
 void IupComp::setName(const char* name)

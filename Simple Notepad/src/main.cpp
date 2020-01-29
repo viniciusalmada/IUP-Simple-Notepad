@@ -64,7 +64,7 @@ void startIup()
 
 void setupConfig(IupConfigComp& config)
 {
-	config.setName("simple_notepad");
+	config.setAppName("simple_notepad");
 	config.load();
 }
 
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 {
 	startIup();
 
-	IupConfigComp config{ IupConfig() };
+	IupConfigComp config;
 	setupConfig(config);
 
 	IupTextComp multitextIupComp{ IupText(nullptr) };
