@@ -61,6 +61,7 @@
 #include "iupcomp/IupHBoxComp.h"
 #include "iupcomp/IupSubmenuComp.h"
 #include "iupcomp/IupVBoxComp.h"
+#include "iupcomp/IupDialogComp.h"
 
 void startIup()
 {
@@ -226,6 +227,11 @@ void setupHelpMenu(IupItemComp& aboutItem)
 	aboutItem.actionCallback(Callbacks::itemAboutActionCb);
 }
 
+void setParentDialog(IupDialogComp& dialog)
+{
+	IupSetAttributeHandle(nullptr, Attr::PARENTDIALOG, dialog.handle());
+}
+
 int main(int argc, char* argv[])
 {
 	/***********************************************/
@@ -363,36 +369,44 @@ int main(int argc, char* argv[])
 				lblStatusBar.handle(), NULL)
 	};
 
-	auto dlg = IupDialog(vbox.handle());
-	IupSetAttributeHandle(dlg, Attr::MENU, menu.handle());
-	IupSetAttribute(dlg, Attr::TITLE, "Simple Notepad");
-	IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
-	IupSetCallback(dlg, Attr::CLOSE_CB, Callbacks::itemExitActionCb);
-	IupSetCallback(dlg, Attr::DROPFILES_CB, (Icallback)Callbacks::dropFilesCb);
-	IupSetAttribute(dlg, Attr::CONFIG, (char*)config.handle());
+	IupDialogComp dialog{ vbox };
+	dialog.menu(menu);
+	dialog.size("HALFxHALF");
+	dialog.title("Simple Notepad");
+	dialog.closeCallback(Callbacks::itemExitActionCb);
+	dialog.dropFileCallback((Icallback)Callbacks::dropFilesCb);
+	dialog.configuration(config);
+
+	// auto dlg = IupDialog(vbox.handle());
+	// IupSetAttributeHandle(dlg, Attr::MENU, menu.handle());
+	// IupSetAttribute(dlg, Attr::TITLE, "Simple Notepad");
+	// IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
+	// IupSetCallback(dlg, Attr::CLOSE_CB, Callbacks::itemExitActionCb);
+	// IupSetCallback(dlg, Attr::DROPFILES_CB, (Icallback)Callbacks::dropFilesCb);
+	// IupSetAttribute(dlg, Attr::CONFIG, (char*)config.handle());
 
 	/* parent for pre-defined dialogs in closed functions (IupMessage) */
-	IupSetAttributeHandle(nullptr, Attr::PARENTDIALOG, dlg);
+	setParentDialog(dialog);
 
-	IupSetCallback(dlg, "K_cN", Callbacks::itemNewActionCb);
-	IupSetCallback(dlg, "K_cO", Callbacks::itemOpenActionCb);
-	IupSetCallback(dlg, "K_cS", Callbacks::itemSaveActionCb);
-	IupSetCallback(dlg, "K_cF", Callbacks::itemFindActionCb);
-	IupSetCallback(dlg, "K_cG", Callbacks::itemGotoActionCb);
+	dialog.keyShortcut("K_cN", Callbacks::itemNewActionCb);
+	dialog.keyShortcut("K_cO", Callbacks::itemOpenActionCb);
+	dialog.keyShortcut("K_cS", Callbacks::itemSaveActionCb);
+	dialog.keyShortcut("K_cF", Callbacks::itemFindActionCb);
+	dialog.keyShortcut("K_cG", Callbacks::itemGotoActionCb);
 
-	IupConfigDialogShow(config.handle(), dlg, Group::MAIN_WINDOW);
+	IupConfigDialogShow(config.handle(), dialog.handle(), Group::MAIN_WINDOW);
 
 	/* initialize the current file */
-	Utils::newFile(dlg);
+	Utils::newFile(dialog.handle());
 	/* open a file from the command line (allow file association in Windows) */
 	if (argc > 1 && argv[1])
 	{
 		const char* filename = argv[1];
-		Utils::openFile(dlg, filename);
+		Utils::openFile(dialog.handle(), filename);
 	}
 
 	// IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
-	IupSetAttribute(dlg, Attr::USERSIZE, nullptr);
+	IupSetAttribute(dialog.handle(), Attr::USERSIZE, nullptr);
 
 	IupMainLoop();
 

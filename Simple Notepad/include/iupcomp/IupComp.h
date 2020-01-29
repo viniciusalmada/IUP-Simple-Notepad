@@ -9,7 +9,6 @@ class IupComp
 protected:
 	Ihandle* iupComp;
 public:
-	virtual ~IupComp() = default;
 	IupComp(Ihandle* iupComp) { this->iupComp = iupComp; }
 	IupComp(): iupComp(nullptr) {}
 	void setName(const char* name);
