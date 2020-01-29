@@ -3,6 +3,7 @@
 
 #include <string>
 #include "iupcomp/IupConfigComp.h"
+#include "utils/Callbacks.h"
 
 
 void IupComp::setName(const char* name)
@@ -58,6 +59,11 @@ void IupComp::gap(int space)
 void IupComp::tip(const char* text)
 {
 	IupSetAttribute(iupComp, Attr::TIP, text);
+}
+
+void IupComp::setAsRecentItems(IupComp& config)
+{
+	IupConfigRecentInit(config.handle(), iupComp, Callbacks::configRecentCb, 6);
 }
 
 char* IupComp::getName()

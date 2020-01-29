@@ -35,6 +35,9 @@
  * -Iup components classes created
  * -Files reorganized in a C++ project standard
  *
+ * Version 1.09.2
+ * -Iup Components completely changes the Iup native calls
+ *
  *
  */
 // ReSharper disable CppLocalVariableMayBeConst
@@ -56,6 +59,7 @@
 #include "iupcomp/IupItemComp.h"
 #include "iupcomp/IupFlatButtonComp.h"
 #include "iupcomp/IupHBoxComp.h"
+#include "iupcomp/IupSubmenuComp.h"
 
 void startIup()
 {
@@ -88,55 +92,86 @@ void setupStatusBar(IupLabelComp& lbl)
 	lbl.padding(10, 5);
 }
 
-void setupToolbar(IupFlatButtonComp& newFbutton,
-				IupFlatButtonComp& openFbutton,
-				IupFlatButtonComp& saveFbutton,
-				IupFlatButtonComp& cutFbutton,
-				IupFlatButtonComp& copyFbutton,
-				IupFlatButtonComp& pasteFbutton,
-				IupFlatButtonComp& findFbutton)
+void setupToolbar(IupFlatButtonComp& newFButton,
+				IupFlatButtonComp& openFButton,
+				IupFlatButtonComp& saveFButton,
+				IupFlatButtonComp& cutFButton,
+				IupFlatButtonComp& copyFButton,
+				IupFlatButtonComp& pasteFButton,
+				IupFlatButtonComp& findFButton)
 {
-	newFbutton.image(IUP::IUP_FILE_NEW);
-	newFbutton.flatActionCallback(Callbacks::itemNewActionCb);
-	newFbutton.tip("New (Ctrl+N)");
-	newFbutton.canFocus(false);
-	newFbutton.padding(5, 5);
+	newFButton.image(IUP::IUP_FILE_NEW);
+	newFButton.flatActionCallback(Callbacks::itemNewActionCb);
+	newFButton.tip("New (Ctrl+N)");
+	newFButton.canFocus(false);
+	newFButton.padding(5, 5);
 
-	openFbutton.image(IUP::IUP_FILE_OPEN);
-	openFbutton.flatActionCallback(Callbacks::itemOpenActionCb);
-	openFbutton.tip("Open (Ctrl+O)");
-	openFbutton.canFocus(false);
-	openFbutton.padding(5, 5);
+	openFButton.image(IUP::IUP_FILE_OPEN);
+	openFButton.flatActionCallback(Callbacks::itemOpenActionCb);
+	openFButton.tip("Open (Ctrl+O)");
+	openFButton.canFocus(false);
+	openFButton.padding(5, 5);
 
-	saveFbutton.image(IUP::IUP_FILE_SAVE);
-	saveFbutton.flatActionCallback(Callbacks::itemSaveActionCb);
-	saveFbutton.tip("Save (Ctrl+S)");
-	saveFbutton.canFocus(false);
-	saveFbutton.padding(5, 5);
+	saveFButton.image(IUP::IUP_FILE_SAVE);
+	saveFButton.flatActionCallback(Callbacks::itemSaveActionCb);
+	saveFButton.tip("Save (Ctrl+S)");
+	saveFButton.canFocus(false);
+	saveFButton.padding(5, 5);
 
-	cutFbutton.image(IUP::IUP_CUT);
-	cutFbutton.flatActionCallback(Callbacks::itemCutActionCb);
-	cutFbutton.tip("Cut (Ctrl+X)");
-	cutFbutton.canFocus(false);
-	cutFbutton.padding(5, 5);
+	cutFButton.image(IUP::IUP_CUT);
+	cutFButton.flatActionCallback(Callbacks::itemCutActionCb);
+	cutFButton.tip("Cut (Ctrl+X)");
+	cutFButton.canFocus(false);
+	cutFButton.padding(5, 5);
 
-	copyFbutton.image(IUP::IUP_COPY);
-	copyFbutton.flatActionCallback(Callbacks::itemCopyActionCb);
-	copyFbutton.tip("Copy (Ctrl+C)");
-	copyFbutton.canFocus(false);
-	copyFbutton.padding(5, 5);
+	copyFButton.image(IUP::IUP_COPY);
+	copyFButton.flatActionCallback(Callbacks::itemCopyActionCb);
+	copyFButton.tip("Copy (Ctrl+C)");
+	copyFButton.canFocus(false);
+	copyFButton.padding(5, 5);
 
-	pasteFbutton.image(IUP::IUP_PASTE);
-	pasteFbutton.flatActionCallback(Callbacks::itemPasteActionCb);
-	pasteFbutton.tip("Paste (Ctrl+V)");
-	pasteFbutton.canFocus(false);
-	pasteFbutton.padding(5, 5);
+	pasteFButton.image(IUP::IUP_PASTE);
+	pasteFButton.flatActionCallback(Callbacks::itemPasteActionCb);
+	pasteFButton.tip("Paste (Ctrl+V)");
+	pasteFButton.canFocus(false);
+	pasteFButton.padding(5, 5);
 
-	findFbutton.image(IUP::IUP_EDIT_FIND);
-	findFbutton.flatActionCallback(Callbacks::itemFindActionCb);
-	findFbutton.tip("Find (Ctrl+F)");
-	findFbutton.canFocus(false);
-	findFbutton.padding(5, 5);
+	findFButton.image(IUP::IUP_EDIT_FIND);
+	findFButton.flatActionCallback(Callbacks::itemFindActionCb);
+	findFButton.tip("Find (Ctrl+F)");
+	findFButton.canFocus(false);
+	findFButton.padding(5, 5);
+}
+
+void setupFileMenu(IupItemComp& newItem, 
+				   IupItemComp& openItem, 
+				   IupItemComp& saveItem, 
+				   IupItemComp& saveAsItem, 
+				   IupItemComp& revertItem,
+				   IupItemComp& exitItem,
+				   IupMenuComp& recentFilesMenu,
+				   IupConfigComp& config)
+{
+	newItem.image(IUP::IUP_FILE_NEW);
+	newItem.actionCallback(Callbacks::itemNewActionCb);
+	newItem.padding(5, 5);
+
+	openItem.image(IUP::IUP_FILE_OPEN);
+	openItem.actionCallback(Callbacks::itemOpenActionCb);
+	openItem.padding(5, 5);
+
+	saveItem.image(IUP::IUP_FILE_SAVE);
+	saveItem.actionCallback(Callbacks::itemSaveActionCb);
+	saveItem.padding(5, 5);
+	
+	saveAsItem.actionCallback(Callbacks::itemSaveasActionCb);
+	saveAsItem.padding(5, 5);
+	revertItem.actionCallback(Callbacks::itemRevertActionCb);
+	revertItem.padding(5, 5);
+	exitItem.actionCallback(Callbacks::itemExitActionCb);
+	exitItem.padding(5, 5);
+	
+	recentFilesMenu.setAsRecentItems(config);
 }
 
 int main(int argc, char* argv[])
@@ -164,37 +199,65 @@ int main(int argc, char* argv[])
 	/***********************************************/
 	/************ TOOLBAR WITH FLAT BUTTONS ********/
 	/***********************************************/
-	IupFlatButtonComp newFbutton;
-	IupFlatButtonComp openFbutton;
-	IupFlatButtonComp saveFbutton;
-	IupFlatButtonComp cutFbutton;
-	IupFlatButtonComp copyFbutton;
-	IupFlatButtonComp pasteFbutton;
-	IupFlatButtonComp findFbutton;
+	IupFlatButtonComp newFButton;
+	IupFlatButtonComp openFButton;
+	IupFlatButtonComp saveFButton;
+	IupFlatButtonComp cutFButton;
+	IupFlatButtonComp copyFButton;
+	IupFlatButtonComp pasteFButton;
+	IupFlatButtonComp findFButton;
 	IupHBoxComp toolbarHBox{
 		IupHbox(
-			newFbutton.handle(),
-			openFbutton.handle(),
-			saveFbutton.handle(),
+			newFButton.handle(),
+			openFButton.handle(),
+			saveFButton.handle(),
 			IupLabelComp::separatorVert(),
-			cutFbutton.handle(),
-			copyFbutton.handle(),
-			pasteFbutton.handle(),
+			cutFButton.handle(),
+			copyFButton.handle(),
+			pasteFButton.handle(),
 			IupLabelComp::separatorVert(),
-			findFbutton.handle(),
+			findFButton.handle(),
 			NULL)
 	};
 	setupToolbar(
-		newFbutton,
-		openFbutton,
-		saveFbutton,
-		cutFbutton,
-		copyFbutton,
-		pasteFbutton,
-		findFbutton
+		newFButton,
+		openFButton,
+		saveFButton,
+		cutFButton,
+		copyFButton,
+		pasteFButton,
+		findFButton
 	);
+	/***********************************************/
+	/************ MENU *****************************/
+	/***********************************************/
+	/*************** FILE MENU *********************/
+	IupItemComp newItem{ "&New\tCtrl+N" };
+	IupItemComp openItem{ "&Open...\tCtrl+O" };
+	IupItemComp saveItem{ "&Save\tCtrl+S" };
+	IupItemComp saveAsItem{ "Save &As..." };
+	IupItemComp revertItem{ "&Revert" };
+	IupMenuComp recentFilesMenu{};
+	IupSubmenuComp recentFilesSubmenu{ "Re&cent Files", recentFilesMenu };
+	IupItemComp exitItem{ "E&xit" };
+	IupMenuComp fileMenu{
+		IupMenu(
+			newItem.handle(),
+			openItem.handle(),
+			saveItem.handle(),
+			saveAsItem.handle(),
+			revertItem.handle(),
+			IupSeparator(),
+			recentFilesSubmenu.handle(),
+			exitItem.handle(),
+			NULL)
+	};
+	IupSubmenuComp fileSubmenu{ "&File", fileMenu };
+	setupFileMenu(newItem, openItem, saveItem, saveAsItem, revertItem, exitItem,
+				  recentFilesMenu, config);
 
-	IupItemComp itemNew{ IupItem("New\tCtrl+N", nullptr) };
+	
+	IupItemComp itemNew{ "New\tCtrl+N" };
 	itemNew.image(IUP::IUP_FILE_NEW);
 	itemNew.actionCallback(Callbacks::itemNewActionCb);
 
@@ -248,26 +311,22 @@ int main(int argc, char* argv[])
 	IupSetCallback(itemDelete, Attr::ACTION, Callbacks::itemDeleteActionCb);
 	IupSetCallback(itemSelectAll, Attr::ACTION, Callbacks::itemSelectAllActionCb);
 
-	auto recentMenu = IupMenu(nullptr);
-	auto submenuRecent = IupSubmenu("Recent &Files", recentMenu);
 
-	auto fileMenu = IupMenu(itemNew.handle(), itemOpen, itemSave, itemSaveas, itemRevert, IupSeparator(), submenuRecent,
-							itemExit, NULL);
+	// auto fileMenu = IupMenu(itemNew.handle(), itemOpen, itemSave, itemSaveas, itemRevert, IupSeparator(), submenuRecent,
+	// 						itemExit, NULL);
 	auto editMenu = IupMenu(itemCut, itemCopy, itemPaste, itemDelete, IupSeparator(), itemFind, itemGoto,
 							IupSeparator(), itemSelectAll, NULL);
 	auto formatMenu = IupMenu(itemFont, NULL);
 	auto helpMenu = IupMenu(itemAbout, NULL);
 
-	auto submenuFile = IupSubmenu("&File", fileMenu);
 	auto submenuEdit = IupSubmenu("&Edit", editMenu);
 	auto submenuFormat = IupSubmenu("F&ormat", formatMenu);
 	auto submenuHelp = IupSubmenu("&Help", helpMenu);
 
-	IupSetCallback(fileMenu, Attr::OPEN_CB, Callbacks::fileMenuOpenCb);
+	IupSetCallback(fileMenu.handle(), Attr::OPEN_CB, Callbacks::fileMenuOpenCb);
 	IupSetCallback(editMenu, Attr::OPEN_CB, Callbacks::editMenuOpenCb);
 
-	auto menu = IupMenu(submenuFile, submenuEdit, submenuFormat, submenuHelp, NULL);
-
+	auto menu = IupMenu(fileSubmenu.handle(), submenuEdit, submenuFormat, submenuHelp, NULL);
 	auto vbox = IupVbox(toolbarHBox.handle(), multitextIupComp.handle(), lblStatusBar.handle(), NULL);
 
 	auto dlg = IupDialog(vbox);
@@ -288,8 +347,6 @@ int main(int argc, char* argv[])
 	IupSetCallback(dlg, "K_cS", Callbacks::itemSaveActionCb);
 	IupSetCallback(dlg, "K_cF", Callbacks::itemFindActionCb);
 	IupSetCallback(dlg, "K_cG", Callbacks::itemGotoActionCb);
-
-	IupConfigRecentInit(config.handle(), recentMenu, Callbacks::configRecentCb, 10);
 
 	IupConfigDialogShow(config.handle(), dlg, Group::MAIN_WINDOW);
 

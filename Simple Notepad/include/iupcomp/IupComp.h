@@ -11,6 +11,7 @@ protected:
 public:
 	virtual ~IupComp() = default;
 	IupComp(Ihandle* iupComp) { this->iupComp = iupComp; }
+	IupComp(): iupComp(nullptr) {}
 	void setName(const char* name);
 	void expand(Expand expand);
 	void padding(int padHor, int padVer);
@@ -19,6 +20,8 @@ public:
 	void margin(int marginHor, int marginVer);
 	void gap(int space);
 	void tip(const char* text);
+	void setAsRecentItems(IupComp& config);
+
 
 	char* getName();
 	Ihandle* handle();

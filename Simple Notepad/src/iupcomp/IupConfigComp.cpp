@@ -13,11 +13,6 @@ void IupConfigComp::setAppName(const char* appName)
 	IupSetAttribute(iupComp, Attr::APP_NAME, appName);
 }
 
-void IupConfigComp::recentInitConfig(IupMenuComp& recentMenu, Icallback action, int limitNum)
-{
-	IupConfigRecentInit(iupComp, recentMenu.handle(), action, limitNum);
-}
-
 void IupConfigComp::dialogShowConfig(IupDialogComp& dialog, const char* group)
 {
 	IupConfigDialogShow(iupComp, dialog.handle(), group);

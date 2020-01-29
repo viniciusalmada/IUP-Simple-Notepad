@@ -17,7 +17,6 @@ public:
 
 	int load();
 	void setAppName(const char*);
-	void recentInitConfig(IupMenuComp& recentMenu, Icallback action, int limitNum);
 	void dialogShowConfig(IupDialogComp& dialog, const char* group);
 
 	int type() override { return IUP_CONFIG_COMP; }
