@@ -18,6 +18,7 @@ public:
 	void canFocus(bool value);
 	void margin(int marginHor, int marginVer);
 	void gap(int space);
+	void tip(const char* text);
 
 	char* getName();
 	Ihandle* handle();

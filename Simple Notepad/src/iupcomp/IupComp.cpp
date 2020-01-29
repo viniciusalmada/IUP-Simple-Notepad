@@ -55,6 +55,11 @@ void IupComp::gap(int space)
 	IupSetAttribute(iupComp, Attr::GAP, spaceS.c_str());
 }
 
+void IupComp::tip(const char* text)
+{
+	IupSetAttribute(iupComp, Attr::TIP, text);
+}
+
 char* IupComp::getName()
 {
 	return IupGetAttribute(iupComp, Attr::NAME);

@@ -6,6 +6,7 @@
 
 #include "iup_config.h"
 #include "utils/Constants.h"
+#include "iupcomp/IupComp.h"
 
 const char* Utils::strFileTitle(const char* filename)
 {

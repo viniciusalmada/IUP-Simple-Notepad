@@ -89,17 +89,29 @@ void setupStatusBar(IupLabelComp& lbl)
 
 int main(int argc, char* argv[])
 {
+	/***********************************************/
+	/*********** IUP STARTUP AND CONFIG ************/
+	/***********************************************/
 	startIup();
 
 	IupConfigComp config;
 	setupConfig(config);
 
+	/***********************************************/
+	/************ MAIN MULTITEXT FIELD *************/
+	/***********************************************/
 	IupTextComp multitextIupComp{ IupText(nullptr) };
 	setupMultilineText(multitextIupComp, config);
 
+	/***********************************************/
+	/************ STATUS BAR LABEL *****************/
+	/***********************************************/
 	IupLabelComp lblStatusBar{ "Lin 1, Col 1" };
 	setupStatusBar(lblStatusBar);
 
+	/***********************************************/
+	/************ TOOLBAR WITH FLAT BUTTONS ********/
+	/***********************************************/
 	IupItemComp itemNew{ IupItem("New\tCtrl+N", nullptr) };
 	itemNew.image(IUP::IUP_FILE_NEW);
 	itemNew.actionCallback(Callbacks::itemNewActionCb);
@@ -107,7 +119,7 @@ int main(int argc, char* argv[])
 	IupFlatButtonComp newFButton;
 	newFButton.image(IUP::IUP_FILE_NEW);
 	newFButton.flatActionCallback(Callbacks::itemNewActionCb);
-	// newFButton.tip("New (Ctrl+N)");
+	newFButton.tip("New (Ctrl+N)");
 	newFButton.canFocus(false);
 	newFButton.padding(5, 5);
 
