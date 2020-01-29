@@ -98,7 +98,8 @@ void setupToolbar(IupFlatButtonComp& newFButton,
 				IupFlatButtonComp& cutFButton,
 				IupFlatButtonComp& copyFButton,
 				IupFlatButtonComp& pasteFButton,
-				IupFlatButtonComp& findFButton)
+				IupFlatButtonComp& findFButton,
+				IupHBoxComp& toolbar)
 {
 	newFButton.image(IUP::IUP_FILE_NEW);
 	newFButton.flatActionCallback(Callbacks::itemNewActionCb);
@@ -141,16 +142,19 @@ void setupToolbar(IupFlatButtonComp& newFButton,
 	findFButton.tip("Find (Ctrl+F)");
 	findFButton.canFocus(false);
 	findFButton.padding(5, 5);
+
+	toolbar.gap(2);
+	toolbar.margin(5,2);
 }
 
-void setupFileMenu(IupItemComp& newItem, 
-				   IupItemComp& openItem, 
-				   IupItemComp& saveItem, 
-				   IupItemComp& saveAsItem, 
-				   IupItemComp& revertItem,
-				   IupItemComp& exitItem,
-				   IupMenuComp& recentFilesMenu,
-				   IupConfigComp& config)
+void setupFileMenu(IupItemComp& newItem,
+					IupItemComp& openItem,
+					IupItemComp& saveItem,
+					IupItemComp& saveAsItem,
+					IupItemComp& revertItem,
+					IupItemComp& exitItem,
+					IupMenuComp& recentFilesMenu,
+					IupConfigComp& config)
 {
 	newItem.image(IUP::IUP_FILE_NEW);
 	newItem.actionCallback(Callbacks::itemNewActionCb);
@@ -161,17 +165,64 @@ void setupFileMenu(IupItemComp& newItem,
 	openItem.padding(5, 5);
 
 	saveItem.image(IUP::IUP_FILE_SAVE);
+	saveItem.setName(Name::ITEM_SAVE);
 	saveItem.actionCallback(Callbacks::itemSaveActionCb);
 	saveItem.padding(5, 5);
-	
+
 	saveAsItem.actionCallback(Callbacks::itemSaveasActionCb);
 	saveAsItem.padding(5, 5);
+	saveAsItem.setName(Name::ITEM_SAVEAS);
+	
 	revertItem.actionCallback(Callbacks::itemRevertActionCb);
 	revertItem.padding(5, 5);
+	revertItem.setName(Name::ITEM_REVERT);
+	
 	exitItem.actionCallback(Callbacks::itemExitActionCb);
 	exitItem.padding(5, 5);
-	
+
 	recentFilesMenu.setAsRecentItems(config);
+}
+
+void setupEditMenu(IupItemComp& cutItem,
+					IupItemComp& copyItem,
+					IupItemComp& pasteItem,
+					IupItemComp& deleteItem,
+					IupItemComp& findItem,
+					IupItemComp& gotoItem,
+					IupItemComp& selectAll)
+{
+	cutItem.image(IUP::IUP_CUT);
+	cutItem.setName(Name::ITEM_CUT);
+	cutItem.actionCallback(Callbacks::itemCutActionCb);
+
+	copyItem.image(IUP::IUP_COPY);
+	copyItem.setName(Name::ITEM_COPY);
+	copyItem.actionCallback(Callbacks::itemCopyActionCb);
+
+	pasteItem.image(IUP::IUP_PASTE);
+	pasteItem.setName(Name::ITEM_PASTE);
+	pasteItem.actionCallback(Callbacks::itemPasteActionCb);
+
+	deleteItem.image(IUP::IUP_ERASE);
+	deleteItem.setName(Name::ITEM_DELETE);
+	deleteItem.actionCallback(Callbacks::itemDeleteActionCb);
+
+	findItem.image(IUP::IUP_EDIT_FIND);
+	findItem.actionCallback(Callbacks::itemFindActionCb);
+
+	gotoItem.actionCallback(Callbacks::itemGotoActionCb);
+
+	selectAll.actionCallback(Callbacks::itemSelectAllActionCb);
+}
+
+void setupFormatMenu(IupItemComp& fontItem)
+{
+	fontItem.actionCallback(Callbacks::itemFontActionCb);
+}
+
+void setupHelpMenu(IupItemComp& aboutItem)
+{
+	aboutItem.actionCallback(Callbacks::itemAboutActionCb);
 }
 
 int main(int argc, char* argv[])
@@ -226,7 +277,8 @@ int main(int argc, char* argv[])
 		cutFButton,
 		copyFButton,
 		pasteFButton,
-		findFButton
+		findFButton,
+		toolbarHBox
 	);
 	/***********************************************/
 	/************ MENU *****************************/
@@ -252,92 +304,64 @@ int main(int argc, char* argv[])
 			exitItem.handle(),
 			NULL)
 	};
+	fileMenu.openCallback(Callbacks::fileMenuOpenCb);
 	IupSubmenuComp fileSubmenu{ "&File", fileMenu };
 	setupFileMenu(newItem, openItem, saveItem, saveAsItem, revertItem, exitItem,
-				  recentFilesMenu, config);
+				recentFilesMenu, config);
 
+	/*************** EDIT MENU *********************/
+	IupItemComp cutItem{ "Cut\tCtrl+X" };
+	IupItemComp copyItem{ "Copy\tCtrl+C" };
+	IupItemComp pasteItem{ "Paste\tCtrl+V" };
+	IupItemComp deleteItem{ "Delete\tDel" };
+	IupItemComp findItem{ "Find...\tCtrl+F" };
+	IupItemComp gotoItem{ "Go to...\tCtrl+G" };
+	IupItemComp selectAll{ "Delete\tDel" };
+
+	IupMenuComp editMenu{
+		IupMenu(cutItem.handle(),
+				copyItem.handle(),
+				pasteItem.handle(),
+				deleteItem.handle(),
+				IupSeparator(),
+				findItem.handle(),
+				gotoItem.handle(),
+				IupSeparator(),
+				selectAll.handle())
+	};
+	editMenu.openCallback(Callbacks::editMenuOpenCb);
+	IupSubmenuComp editSubmenu{ "&Edit", editMenu };
+	setupEditMenu(cutItem, copyItem, pasteItem, deleteItem, findItem, gotoItem, selectAll);
+
+	/*************** FORMAT MENU *********************/
+	IupItemComp fontItem{ "&Font..." };
+
+	IupMenuComp formatMenu{ IupMenu(fontItem.handle()) };
+
+	IupSubmenuComp formatSubmenu{ "&Format", formatMenu };
+	setupFormatMenu(fontItem);
 	
-	IupItemComp itemNew{ "New\tCtrl+N" };
-	itemNew.image(IUP::IUP_FILE_NEW);
-	itemNew.actionCallback(Callbacks::itemNewActionCb);
+	/*************** HELP MENU *********************/
+	IupItemComp aboutItem{ "&About..." };
 
-	auto itemOpen = IupItem("&Open...\tCtrl+O", nullptr);
-	IupSetAttribute(itemOpen, Attr::IMAGE, IUP::IUP_FILE_OPEN);
-	auto itemSave = IupItem("&Save\tCtrl+S", nullptr);
-	IupSetAttribute(itemSave, Attr::NAME, Name::ITEM_SAVE);
-	IupSetAttribute(itemSave, Attr::IMAGE, IUP::IUP_FILE_SAVE);
-	IupSetCallback(itemSave, Attr::ACTION, Callbacks::itemSaveActionCb);
-	auto itemSaveas = IupItem("Save &As...", nullptr);
-	IupSetAttribute(itemSaveas, Attr::NAME, Name::ITEM_SAVEAS);
-	auto itemRevert = IupItem("Revert", nullptr);
-	IupSetAttribute(itemRevert, Attr::NAME, Name::ITEM_REVERT);
-	IupSetCallback(itemRevert, Attr::ACTION, Callbacks::itemRevertActionCb);
-	auto itemExit = IupItem("E&xit", nullptr);
-	auto itemFind = IupItem("&Find...\tCtrl+F", nullptr);
-	IupSetAttribute(itemFind, Attr::IMAGE, IUP::IUP_EDIT_FIND);
-	auto itemGoto = IupItem("&Go To...\tCtrl+G", nullptr);
-	auto itemFont = IupItem("&Font...", nullptr);
-	auto itemAbout = IupItem("&About...", nullptr);
+	IupMenuComp helpMenu{ IupMenu(aboutItem.handle()) };
 
-	auto itemCut = IupItem("Cut\tCtrl+X", nullptr);
-	auto itemCopy = IupItem("Copy\tCtrl+C", nullptr);
-	auto itemPaste = IupItem("Paste\tCtrl+V", nullptr);
-	auto itemDelete = IupItem("Delete\tDel", nullptr);
-	auto itemSelectAll = IupItem("Select All\tCtrl+A", nullptr);
+	IupSubmenuComp helpSubmenu{ "&Help", helpMenu };
+	setupHelpMenu(aboutItem);
 
-	IupSetAttribute(itemCopy, Attr::NAME, Name::ITEM_COPY);
-	IupSetAttribute(itemCut, Attr::NAME, Name::ITEM_CUT);
-	IupSetAttribute(itemPaste, Attr::NAME, Name::ITEM_PASTE);
-	IupSetAttribute(itemDelete, Attr::NAME, Name::ITEM_DELETE);
+	//////////////////////////
 
-	IupSetAttribute(itemCopy, Attr::IMAGE, IUP::IUP_COPY);
-	IupSetAttribute(itemCut, Attr::IMAGE, IUP::IUP_CUT);
-	IupSetAttribute(itemPaste, Attr::IMAGE, IUP::IUP_PASTE);
-	IupSetAttribute(itemDelete, Attr::IMAGE, IUP::IUP_ERASE);
+	IupMenuComp menu{ IupMenu(fileSubmenu.handle(), editSubmenu.handle(), formatSubmenu.handle(), helpSubmenu.handle(), NULL) };
 
-	IupSetAttribute(toolbarHBox.handle(), Attr::MARGIN, M_5_X_5);
-	IupSetAttribute(toolbarHBox.handle(), Attr::GAP, "2");
-
-	IupSetCallback(itemOpen, Attr::ACTION, Callbacks::itemOpenActionCb);
-	IupSetCallback(itemSaveas, Attr::ACTION, Callbacks::itemSaveasActionCb);
-	IupSetCallback(itemExit, Attr::ACTION, Callbacks::itemExitActionCb);
-	IupSetCallback(itemFind, Attr::ACTION, Callbacks::itemFindActionCb);
-	IupSetCallback(itemGoto, Attr::ACTION, Callbacks::itemGotoActionCb);
-	IupSetCallback(itemFont, Attr::ACTION, Callbacks::itemFontActionCb);
-	IupSetCallback(itemAbout, Attr::ACTION, Callbacks::itemAboutActionCb);
-	IupSetCallback(itemCopy, Attr::ACTION, Callbacks::itemCopyActionCb);
-	IupSetCallback(itemCut, Attr::ACTION, Callbacks::itemCutActionCb);
-	IupSetCallback(itemPaste, Attr::ACTION, Callbacks::itemPasteActionCb);
-	IupSetCallback(itemDelete, Attr::ACTION, Callbacks::itemDeleteActionCb);
-	IupSetCallback(itemSelectAll, Attr::ACTION, Callbacks::itemSelectAllActionCb);
-
-
-	// auto fileMenu = IupMenu(itemNew.handle(), itemOpen, itemSave, itemSaveas, itemRevert, IupSeparator(), submenuRecent,
-	// 						itemExit, NULL);
-	auto editMenu = IupMenu(itemCut, itemCopy, itemPaste, itemDelete, IupSeparator(), itemFind, itemGoto,
-							IupSeparator(), itemSelectAll, NULL);
-	auto formatMenu = IupMenu(itemFont, NULL);
-	auto helpMenu = IupMenu(itemAbout, NULL);
-
-	auto submenuEdit = IupSubmenu("&Edit", editMenu);
-	auto submenuFormat = IupSubmenu("F&ormat", formatMenu);
-	auto submenuHelp = IupSubmenu("&Help", helpMenu);
-
-	IupSetCallback(fileMenu.handle(), Attr::OPEN_CB, Callbacks::fileMenuOpenCb);
-	IupSetCallback(editMenu, Attr::OPEN_CB, Callbacks::editMenuOpenCb);
-
-	auto menu = IupMenu(fileSubmenu.handle(), submenuEdit, submenuFormat, submenuHelp, NULL);
 	auto vbox = IupVbox(toolbarHBox.handle(), multitextIupComp.handle(), lblStatusBar.handle(), NULL);
 
 	auto dlg = IupDialog(vbox);
-	IupSetAttributeHandle(dlg, Attr::MENU, menu);
+	IupSetAttributeHandle(dlg, Attr::MENU, menu.handle());
 	IupSetAttribute(dlg, Attr::TITLE, "Simple Notepad");
 	IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
 	IupSetCallback(dlg, Attr::CLOSE_CB, Callbacks::itemExitActionCb);
 	IupSetCallback(dlg, Attr::DROPFILES_CB, (Icallback)Callbacks::dropFilesCb);
 	IupSetAttribute(dlg, Attr::CONFIG, (char*)config.handle());
-
-	IupSetCallback(editMenu, Attr::OPEN_CB, Callbacks::editMenuOpenCb);
 
 	/* parent for pre-defined dialogs in closed functions (IupMessage) */
 	IupSetAttributeHandle(nullptr, Attr::PARENTDIALOG, dlg);

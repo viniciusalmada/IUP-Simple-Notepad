@@ -1,1 +1,0 @@
-#include "iupcomp/IupFlatButtonComp.h"
