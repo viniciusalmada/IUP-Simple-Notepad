@@ -391,4 +391,4 @@ Tempx64Debug*
 Tmp*
 
 # VCXPROJ files
-*.vcxproj*
+# *.vcxproj*
