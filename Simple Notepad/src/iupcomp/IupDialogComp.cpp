@@ -35,3 +35,13 @@ void IupDialogComp::keyShortcut(const char* key, Icallback action)
 {
 	IupSetCallback(iupComp, key, action);
 }
+
+void IupDialogComp::showWithConfig(IupConfigComp& config)
+{
+	IupConfigDialogShow(config.handle(), iupComp, Group::MAIN_WINDOW);
+}
+
+void IupDialogComp::userSize(const char* value)
+{
+	IupSetAttribute(iupComp, Attr::USERSIZE, value);
+}

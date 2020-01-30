@@ -234,29 +234,21 @@ void setParentDialog(IupDialogComp& dialog)
 
 int main(int argc, char* argv[])
 {
-	/***********************************************/
-	/*********** IUP STARTUP AND CONFIG ************/
-	/***********************************************/
+
 	startIup();
 
 	IupConfigComp config;
 	setupConfig(config);
 
-	/***********************************************/
-	/************ MAIN MULTITEXT FIELD *************/
-	/***********************************************/
+
 	IupTextComp multitextIupComp{ IupText(nullptr) };
 	setupMultilineText(multitextIupComp, config);
 
-	/***********************************************/
-	/************ STATUS BAR LABEL *****************/
-	/***********************************************/
+
 	IupLabelComp lblStatusBar{ "Lin 1, Col 1" };
 	setupStatusBar(lblStatusBar);
 
-	/***********************************************/
-	/************ TOOLBAR WITH FLAT BUTTONS ********/
-	/***********************************************/
+
 	IupFlatButtonComp newFButton;
 	IupFlatButtonComp openFButton;
 	IupFlatButtonComp saveFButton;
@@ -287,10 +279,7 @@ int main(int argc, char* argv[])
 		findFButton,
 		toolbarHBox
 	);
-	/***********************************************/
-	/************ MENU *****************************/
-	/***********************************************/
-	/*************** FILE MENU *********************/
+
 	IupItemComp newItem{ "&New\tCtrl+N" };
 	IupItemComp openItem{ "&Open...\tCtrl+O" };
 	IupItemComp saveItem{ "&Save\tCtrl+S" };
@@ -316,7 +305,6 @@ int main(int argc, char* argv[])
 	setupFileMenu(newItem, openItem, saveItem, saveAsItem, revertItem, exitItem,
 				recentFilesMenu, config);
 
-	/*************** EDIT MENU *********************/
 	IupItemComp cutItem{ "Cut\tCtrl+X" };
 	IupItemComp copyItem{ "Copy\tCtrl+C" };
 	IupItemComp pasteItem{ "Paste\tCtrl+V" };
@@ -340,7 +328,7 @@ int main(int argc, char* argv[])
 	IupSubmenuComp editSubmenu{ "&Edit", editMenu };
 	setupEditMenu(cutItem, copyItem, pasteItem, deleteItem, findItem, gotoItem, selectAll);
 
-	/*************** FORMAT MENU *********************/
+
 	IupItemComp fontItem{ "&Font..." };
 
 	IupMenuComp formatMenu{ IupMenu(fontItem.handle()) };
@@ -348,7 +336,7 @@ int main(int argc, char* argv[])
 	IupSubmenuComp formatSubmenu{ "&Format", formatMenu };
 	setupFormatMenu(fontItem);
 
-	/*************** HELP MENU *********************/
+
 	IupItemComp aboutItem{ "&About..." };
 
 	IupMenuComp helpMenu{ IupMenu(aboutItem.handle()) };
@@ -377,14 +365,6 @@ int main(int argc, char* argv[])
 	dialog.dropFileCallback((Icallback)Callbacks::dropFilesCb);
 	dialog.configuration(config);
 
-	// auto dlg = IupDialog(vbox.handle());
-	// IupSetAttributeHandle(dlg, Attr::MENU, menu.handle());
-	// IupSetAttribute(dlg, Attr::TITLE, "Simple Notepad");
-	// IupSetAttribute(dlg, Attr::SIZE, "HALFxHALF");
-	// IupSetCallback(dlg, Attr::CLOSE_CB, Callbacks::itemExitActionCb);
-	// IupSetCallback(dlg, Attr::DROPFILES_CB, (Icallback)Callbacks::dropFilesCb);
-	// IupSetAttribute(dlg, Attr::CONFIG, (char*)config.handle());
-
 	/* parent for pre-defined dialogs in closed functions (IupMessage) */
 	setParentDialog(dialog);
 
@@ -394,7 +374,7 @@ int main(int argc, char* argv[])
 	dialog.keyShortcut("K_cF", Callbacks::itemFindActionCb);
 	dialog.keyShortcut("K_cG", Callbacks::itemGotoActionCb);
 
-	IupConfigDialogShow(config.handle(), dialog.handle(), Group::MAIN_WINDOW);
+	dialog.showWithConfig(config);
 
 	/* initialize the current file */
 	Utils::newFile(dialog.handle());
@@ -405,8 +385,7 @@ int main(int argc, char* argv[])
 		Utils::openFile(dialog.handle(), filename);
 	}
 
-	// IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
-	IupSetAttribute(dialog.handle(), Attr::USERSIZE, nullptr);
+	dialog.userSize(nullptr);
 
 	IupMainLoop();
 

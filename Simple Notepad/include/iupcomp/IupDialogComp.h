@@ -21,6 +21,8 @@ public:
 	void keyShortcut(const char* key, Icallback action);
 
 	int type() override { return IUP_DIALOG_COMP; }
+	void showWithConfig(IupConfigComp& config);
+	void userSize(const char* value);
 };
 
 #endif
